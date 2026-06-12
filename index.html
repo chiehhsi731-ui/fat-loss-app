@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>減脂挑戰</title>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0d1a;color:#fff;font-family:-apple-system,sans-serif;max-width:390px;margin:0 auto;min-height:100vh}
+.header{background:#0f0d1a;padding:14px 20px 10px;border-bottom:1px solid #2a2040;position:sticky;top:0;z-index:10}
+.header-top{display:flex;justify-content:space-between;align-items:center}
+.app-title{font-size:17px;font-weight:600}
+.streak-badge{background:#7F77DD;color:#fff;font-size:11px;padding:3px 10px;border-radius:20px}
+.header-sub{color:#6b6485;font-size:12px;margin-top:2px}
+.screen{padding:16px;display:none}
+.screen.active{display:block}
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:#13101f;border-top:1px solid #2a2040;display:flex;padding:8px 0 20px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;padding:4px 0}
+.tab span{font-size:10px;color:#6b6485}
+.tab.active span{color:#7F77DD}
+.tab svg{width:22px;height:22px;fill:none;stroke:#6b6485;stroke-width:1.5}
+.tab.active svg{stroke:#7F77DD}
+.card{background:#1a1630;border-radius:16px;border:1px solid #2a2040;padding:14px;margin-bottom:12px}
+.section-label{color:#6b6485;font-size:11px;font-weight:600;letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat-box{background:#13101f;border-radius:12px;padding:12px;border:1px solid #2a2040}
+.stat-val{color:#fff;font-size:22px;font-weight:600}
+.stat-unit{color:#6b6485;font-size:11px}
+.stat-label{color:#6b6485;font-size:11px;margin-top:4px}
+.stat-delta{font-size:11px;margin-top:2px;color:#1D9E75}
+.week-pill{display:inline-block;background:#13101f;border:1px solid #2a2040;border-radius:20px;padding:3px 10px;font-size:11px;color:#6b6485;margin-bottom:12px}
+.week-pill strong{color:#7F77DD}
+.progress-wrap{margin-top:6px}
+.progress-label{display:flex;justify-content:space-between;margin-bottom:4px}
+.progress-label span{font-size:12px;color:#888}
+.progress-label strong{font-size:12px;color:#AFA9EC}
+.progress-bar{background:#26215C;border-radius:20px;height:6px}
+.progress-fill{background:#7F77DD;border-radius:20px;height:6px;transition:width .5s}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.badge{background:#26215C;color:#AFA9EC;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid #3C3489}
+.badge.earned{background:#534AB7;color:#fff}
+.member-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #2a2040}
+.member-row:last-child{border-bottom:none}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;background:#3C3489;color:#AFA9EC}
+.member-info{flex:1}
+.member-name{color:#fff;font-size:13px;font-weight:500}
+.member-stats{color:#6b6485;font-size:11px;margin-top:1px}
+.mbadge{font-size:11px;padding:2px 8px;border-radius:10px}
+.mbadge-win{background:#085041;color:#5DCAA5}
+.mbadge-go{background:#26215C;color:#AFA9EC}
+.meal-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2a2040}
+.meal-row:last-child{border-bottom:none}
+.meal-name{color:#ccc;font-size:13px}
+.meal-type{color:#6b6485;font-size:11px}
+.meal-cal{color:#7F77DD;font-size:13px;font-weight:600}
+.goal-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px
