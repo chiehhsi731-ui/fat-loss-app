@@ -55,4 +55,317 @@ body{background:#0f0d1a;color:#fff;font-family:-apple-system,sans-serif;max-widt
 .meal-name{color:#ccc;font-size:13px}
 .meal-type{color:#6b6485;font-size:11px}
 .meal-cal{color:#7F77DD;font-size:13px;font-weight:600}
-.goal-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px
+.goal-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #2a2040}
+.goal-row:last-child{border-bottom:none}
+.goal-label{color:#888;font-size:13px}
+.goal-val{color:#fff;font-size:13px;font-weight:500}
+.btn-purple{background:#534AB7;color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;width:100%;cursor:pointer;margin-top:8px}
+.btn-outline{background:transparent;color:#7F77DD;border:1px solid #534AB7;border-radius:12px;padding:10px;font-size:13px;width:100%;cursor:pointer;margin-top:8px}
+.input-field{background:#13101f;border:1px solid #2a2040;border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;width:100%;outline:none;margin-bottom:8px}
+.input-field:focus{border-color:#534AB7}
+.loading{display:flex;align-items:center;justify-content:center;height:200px;color:#6b6485}
+pb{padding-bottom:100px;display:block}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <span class="app-title">減脂挑戰 💪</span>
+    <span class="streak-badge" id="streak-badge">🔥 載入中</span>
+  </div>
+  <div class="header-sub" id="header-sub">正在載入...</div>
+</div>
+
+<!-- 數據頁 -->
+<div class="screen active" id="screen-data">
+  <pb></pb>
+  <div class="week-pill">本週 <strong id="week-rate">計算中...</strong></div>
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val" id="cur-weight">--<span class="stat-unit">kg</span></div>
+      <div class="stat-label">今日體重</div>
+      <div class="stat-delta" id="weight-delta"></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="cur-fat">--<span class="stat-unit">%</span></div>
+      <div class="stat-label">體脂率</div>
+      <div class="stat-delta" id="fat-delta"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">目標進度</div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="goal-w-label">目標體重</span><strong id="goal-w-val">--</strong></div>
+      <div class="progress-bar"><div class="progress-fill" id="goal-w-bar" style="width:0%"></div></div>
+    </div>
+    <div class="progress-wrap" style="margin-top:10px">
+      <div class="progress-label"><span id="goal-f-label">目標體脂</span><strong id="goal-f-val">--</strong></div>
+      <div class="progress-bar"><div class="progress-fill" id="goal-f-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">成就徽章</div>
+    <div class="badge-row" id="badge-row">
+      <span class="badge">🏅 載入中</span>
+    </div>
+  </div>
+</div>
+
+<!-- 隊伍頁 -->
+<div class="screen" id="screen-team">
+  <pb></pb>
+  <div id="team-content"><div class="loading">載入隊伍資料...</div></div>
+  <button class="btn-purple" onclick="showCreateTeam()">＋ 建立新隊伍</button>
+  <div id="create-team-form" style="display:none;margin-top:12px">
+    <div class="card">
+      <div class="section-label">建立隊伍</div>
+      <input class="input-field" id="team-name" placeholder="隊伍名稱">
+      <input class="input-field" id="team-deadline" type="date" placeholder="截止日">
+      <input class="input-field" id="bet-content" placeholder="賭注內容（輸家要做什麼）">
+      <input class="input-field" id="bet-amount" type="number" placeholder="賭注金額（選填）">
+      <button class="btn-purple" onclick="createTeam()">建立隊伍</button>
+    </div>
+  </div>
+</div>
+
+<!-- 飲食頁 -->
+<div class="screen" id="screen-food">
+  <pb></pb>
+  <div class="week-pill">今日熱量 <strong id="today-cal">計算中...</strong></div>
+  <div class="card">
+    <div class="section-label">今日飲食</div>
+    <div id="meal-list"><div class="loading">載入中...</div></div>
+  </div>
+  <div class="card">
+    <div class="section-label">新增飲食</div>
+    <select class="input-field" id="meal-type">
+      <option value="早餐">早餐</option>
+      <option value="午餐">午餐</option>
+      <option value="晚餐">晚餐</option>
+      <option value="點心">點心</option>
+    </select>
+    <input class="input-field" id="food-search" placeholder="食物名稱" oninput="searchFood()">
+    <div id="food-results"></div>
+    <input class="input-field" id="food-cal" type="number" placeholder="卡路里 (kcal)">
+    <button class="btn-purple" onclick="addMeal()">新增記錄</button>
+  </div>
+</div>
+
+<!-- 目標頁 -->
+<div class="screen" id="screen-goal">
+  <pb></pb>
+  <div class="card">
+    <div class="section-label">我的目標</div>
+    <div class="goal-row"><div class="goal-label">目標體重</div><input class="input-field" id="g-weight" type="number" placeholder="kg" style="width:100px;margin:0"></div>
+    <div class="goal-row"><div class="goal-label">目標體脂</div><input class="input-field" id="g-fat" type="number" placeholder="%" style="width:100px;margin:0"></div>
+    <div class="goal-row"><div class="goal-label">每日熱量上限</div><input class="input-field" id="g-cal" type="number" placeholder="kcal" style="width:100px;margin:0"></div>
+    <button class="btn-purple" onclick="saveGoals()">儲存目標</button>
+  </div>
+  <div class="card">
+    <div class="section-label">今日快速記錄</div>
+    <input class="input-field" id="q-weight" type="number" placeholder="體重 kg">
+    <input class="input-field" id="q-fat" type="number" placeholder="體脂 %">
+    <input class="input-field" id="q-water" type="number" placeholder="飲水 ml">
+    <button class="btn-purple" onclick="quickRecord()">記錄</button>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <button class="tab active" id="tab-data" onclick="switchTab('data')">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span>數據</span>
+  </button>
+  <button class="tab" id="tab-team" onclick="switchTab('team')">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>隊伍</span>
+  </button>
+  <button class="tab" id="tab-food" onclick="switchTab('food')">
+    <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+    <span>飲食</span>
+  </button>
+  <button class="tab" id="tab-goal" onclick="switchTab('goal')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    <span>目標</span>
+  </button>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://sbkhkhghfeyaawkocvrj.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNia2hraGdoZmV5YWF3a29jdnJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjgyMzksImV4cCI6MjA5Njc0NDIzOX0.7UpFVsNysDa2uwvyFhE2TTDtxTzDrDwAIHXAYEHiYOo';
+const LIFF_ID = '2010377807-QvlNPosn';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let userId = null;
+let userProfile = null;
+
+async function init() {
+  await liff.init({ liffId: LIFF_ID });
+  if (!liff.isLoggedIn()) { liff.login(); return; }
+  userProfile = await liff.getProfile();
+  userId = userProfile.userId;
+  await db.from('users').upsert({ id: userId, display_name: userProfile.displayName, picture_url: userProfile.pictureUrl });
+  document.getElementById('header-sub').textContent = `嗨，${userProfile.displayName}！`;
+  loadData();
+  loadMeals();
+  loadTeams();
+  loadGoals();
+}
+
+async function loadData() {
+  const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString();
+  const { data } = await db.from('body_records').select('*').eq('user_id', userId).gte('recorded_at', weekAgo).order('recorded_at', {ascending:false});
+  if (!data || data.length === 0) { document.getElementById('streak-badge').textContent = '🔥 0天'; return; }
+  const latest = data[0];
+  if (latest.weight) document.getElementById('cur-weight').innerHTML = `${latest.weight}<span class="stat-unit">kg</span>`;
+  if (latest.body_fat) document.getElementById('cur-fat').innerHTML = `${latest.body_fat}<span class="stat-unit">%</span>`;
+  document.getElementById('week-rate').textContent = `${data.length}/7天`;
+  const { data: member } = await db.from('team_members').select('streak,goal_weight,goal_body_fat').eq('user_id', userId).limit(1).maybeSingle();
+  if (member) {
+    document.getElementById('streak-badge').textContent = `🔥 ${member.streak || 0}天`;
+    if (member.goal_weight && latest.weight) {
+      document.getElementById('goal-w-label').textContent = `目標體重 ${member.goal_weight}kg`;
+      document.getElementById('goal-w-val').textContent = `${latest.weight}kg`;
+    }
+    if (member.goal_body_fat && latest.body_fat) {
+      document.getElementById('goal-f-label').textContent = `目標體脂 ${member.goal_body_fat}%`;
+      document.getElementById('goal-f-val').textContent = `${latest.body_fat}%`;
+    }
+  }
+  const { data: badges } = await db.from('achievements').select('badge_type').eq('user_id', userId);
+  const badgeNames = { first_record:'🏅 首次記錄', streak_7:'🔥 7天連續', goal_achieved:'🏆 目標達成' };
+  const badgeEl = document.getElementById('badge-row');
+  if (badges && badges.length > 0) {
+    badgeEl.innerHTML = badges.map(b => `<span class="badge earned">${badgeNames[b.badge_type] || b.badge_type}</span>`).join('');
+  } else {
+    badgeEl.innerHTML = '<span class="badge">完成記錄解鎖徽章！</span>';
+  }
+}
+
+async function loadMeals() {
+  const today = new Date().toISOString().split('T')[0];
+  const { data } = await db.from('meal_records').select('*').eq('user_id', userId).gte('recorded_at', `${today}T00:00:00`).order('recorded_at');
+  const total = data ? data.reduce((s,r) => s + (r.calories||0), 0) : 0;
+  document.getElementById('today-cal').textContent = `${total} kcal`;
+  const el = document.getElementById('meal-list');
+  if (!data || data.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0">今天還沒有飲食記錄</div>'; return; }
+  el.innerHTML = data.map(r => `<div class="meal-row"><div><div class="meal-name">${r.food_name}</div><div class="meal-type">${r.meal_type}</div></div><div class="meal-cal">${r.calories} kcal</div></div>`).join('');
+}
+
+async function addMeal() {
+  const mealType = document.getElementById('meal-type').value;
+  const foodName = document.getElementById('food-search').value;
+  const calories = parseInt(document.getElementById('food-cal').value);
+  if (!foodName || !calories) { alert('請填寫食物名稱和卡路里'); return; }
+  await db.from('meal_records').insert({ user_id: userId, meal_type: mealType, food_name: foodName, calories });
+  document.getElementById('food-search').value = '';
+  document.getElementById('food-cal').value = '';
+  loadMeals();
+  alert('✅ 已記錄！');
+}
+
+async function searchFood() {
+  const q = document.getElementById('food-search').value;
+  if (q.length < 1) { document.getElementById('food-results').innerHTML = ''; return; }
+  const { data } = await db.from('food_database').select('*').ilike('name', `%${q}%`).limit(5);
+  const el = document.getElementById('food-results');
+  if (!data || data.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = data.map(f => `<div onclick="selectFood('${f.name}',${f.calories_per_100g})" style="padding:8px;background:#13101f;border-radius:8px;margin-bottom:4px;cursor:pointer;font-size:13px;color:#ccc">${f.name} — ${f.calories_per_100g}kcal/100g</div>`).join('');
+}
+
+function selectFood(name, cal) {
+  document.getElementById('food-search').value = name;
+  document.getElementById('food-cal').value = cal;
+  document.getElementById('food-results').innerHTML = '';
+}
+
+async function loadTeams() {
+  const { data: members } = await db.from('team_members').select('team_id, goal_weight, goal_body_fat, streak').eq('user_id', userId);
+  const el = document.getElementById('team-content');
+  if (!members || members.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
+  const teamIds = members.map(m => m.team_id);
+  const { data: teams } = await db.from('teams').select('*').in('id', teamIds);
+  if (!teams) return;
+  el.innerHTML = teams.map(t => `
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:15px;font-weight:600;color:#fff">${t.name}</div>
+        <div style="font-size:11px;color:#6b6485">截止 ${t.deadline || '--'}</div>
+      </div>
+      ${t.bet_content ? `<div style="color:#AFA9EC;font-size:12px;background:#26215C;padding:6px 10px;border-radius:8px">🎰 ${t.bet_content}${t.bet_amount ? ` $${t.bet_amount}` : ''}</div>` : ''}
+      <div style="margin-top:8px;font-size:12px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
+    </div>
+  `).join('');
+}
+
+function showCreateTeam() {
+  const form = document.getElementById('create-team-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function createTeam() {
+  const name = document.getElementById('team-name').value;
+  const deadline = document.getElementById('team-deadline').value;
+  const betContent = document.getElementById('bet-content').value;
+  const betAmount = parseInt(document.getElementById('bet-amount').value) || null;
+  if (!name) { alert('請填寫隊伍名稱'); return; }
+  const { data: team } = await db.from('teams').insert({ name, leader_id: userId, deadline: deadline || null, bet_content: betContent || null, bet_amount: betAmount }).select().single();
+  if (team) {
+    await db.from('team_members').insert({ team_id: team.id, user_id: userId });
+    alert(`✅ 隊伍建立成功！\n邀請碼：${team.invite_code}\n把邀請碼分享給隊友，讓他們輸入加入！`);
+    document.getElementById('create-team-form').style.display = 'none';
+    loadTeams();
+  }
+}
+
+async function loadGoals() {
+  const { data } = await db.from('team_members').select('goal_weight,goal_body_fat,daily_calorie_limit').eq('user_id', userId).limit(1).maybeSingle();
+  if (data) {
+    if (data.goal_weight) document.getElementById('g-weight').value = data.goal_weight;
+    if (data.goal_body_fat) document.getElementById('g-fat').value = data.goal_body_fat;
+    if (data.daily_calorie_limit) document.getElementById('g-cal').value = data.daily_calorie_limit;
+  }
+}
+
+async function saveGoals() {
+  const gw = parseFloat(document.getElementById('g-weight').value);
+  const gf = parseFloat(document.getElementById('g-fat').value);
+  const gc = parseInt(document.getElementById('g-cal').value);
+  await db.from('team_members').upsert({ user_id: userId, goal_weight: gw||null, goal_body_fat: gf||null, daily_calorie_limit: gc||null });
+  alert('✅ 目標已儲存！');
+  loadData();
+}
+
+async function quickRecord() {
+  const w = parseFloat(document.getElementById('q-weight').value);
+  const f = parseFloat(document.getElementById('q-fat').value);
+  const wa = parseInt(document.getElementById('q-water').value);
+  if (!w && !f && !wa) { alert('請至少填一項'); return; }
+  await db.from('body_records').insert({ user_id: userId, weight: w||null, body_fat: f||null, water_ml: wa||null });
+  if (w) {
+    const { data: existing } = await db.from('achievements').select('id').eq('user_id', userId).eq('badge_type', 'first_record').limit(1);
+    if (!existing || existing.length === 0) await db.from('achievements').insert({ user_id: userId, badge_type: 'first_record' });
+  }
+  document.getElementById('q-weight').value = '';
+  document.getElementById('q-fat').value = '';
+  document.getElementById('q-water').value = '';
+  alert('✅ 記錄成功！');
+  loadData();
+}
+
+function switchTab(name) {
+  ['data','team','food','goal'].forEach(t => {
+    document.getElementById(`screen-${t}`).classList.toggle('active', t===name);
+    document.getElementById(`tab-${t}`).classList.toggle('active', t===name);
+  });
+  if (name === 'food') loadMeals();
+  if (name === 'team') loadTeams();
+  if (name === 'goal') loadGoals();
+}
+
+init().catch(console.error);
+</script>
+</body>
+</html>
