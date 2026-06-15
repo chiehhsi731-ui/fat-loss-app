@@ -283,6 +283,16 @@ async function loadData() {
   }
 }
 
+async function deleteMeal(id) {
+  await db.from('meal_records').delete().eq('id', id);
+  loadMeals();
+  // 更新今日熱量
+  const today = new Date().toISOString().split('T')[0];
+  const { data } = await db.from('meal_records').select('calories').eq('user_id', userId).gte('recorded_at', `${today}T00:00:00`);
+  const total = data ? data.reduce((s, r) => s + r.calories, 0) : 0;
+  document.getElementById('today-cal').textContent = total + ' kcal';
+}
+
 async function loadMeals() {
   const today = new Date().toISOString().split('T')[0];
   const { data } = await db.from('meal_records').select('*').eq('user_id', userId).gte('recorded_at', `${today}T00:00:00`).order('recorded_at');
@@ -290,7 +300,16 @@ async function loadMeals() {
   document.getElementById('today-cal').textContent = `${total} kcal`;
   const el = document.getElementById('meal-list');
   if (!data || data.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:15px;padding:8px 0">今天還沒有飲食記錄</div>'; return; }
-  el.innerHTML = data.map(r => `<div class="meal-row"><div><div class="meal-name">${r.food_name}</div><div class="meal-type">${r.meal_type}</div></div><div class="meal-cal">${r.calories} kcal</div></div>`).join('');
+  el.innerHTML = data.map(r => `<div class="meal-row">
+    <div style="flex:1;min-width:0">
+      <div class="meal-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.food_name}</div>
+      <div class="meal-type">${r.meal_type}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <div class="meal-cal">${r.calories} kcal</div>
+      <button onclick="deleteMeal('${r.id}')" style="background:none;border:none;color:#6b6485;font-size:18px;cursor:pointer;padding:0 4px;line-height:1">×</button>
+    </div>
+  </div>`).join('');
 }
 
 async function addMeal() {
