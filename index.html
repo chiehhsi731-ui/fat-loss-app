@@ -293,6 +293,13 @@ async function loadData() {
   }
 }
 
+async function leaveTeam(teamId, teamName) {
+  if (!confirm(`確定要退出「${teamName}」嗎？`)) return;
+  await db.from('team_members').delete().eq('user_id', userId).eq('team_id', teamId);
+  alert(`已退出「${teamName}」`);
+  loadTeams();
+}
+
 function copyInvite(teamName, code) {
   const msg = `🏋️ 邀請你加入「${teamName}」減脂挑戰！\n\n加入方式：\n1️⃣ 加這個 Bot：https://line.me/R/ti/p/@254dtuqa\n2️⃣ 傳送指令：加入 ${code}\n\n或直接開啟 APP：\nhttps://liff.line.me/2010377807-QvlNPosn\n\n一起加油！💪`;
   if (navigator.clipboard) {
@@ -448,7 +455,10 @@ async function loadTeams() {
       <div style="margin-bottom:8px">${memberRows}</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
         <div style="font-size:14px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
-        <button onclick="copyInvite('${t.name}','${t.invite_code}')" style="background:#534AB7;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer">📨 邀請好友</button>
+        <div style="display:flex;gap:8px">
+          <button onclick="copyInvite('${t.name}','${t.invite_code}')" style="background:#534AB7;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer">📨 邀請</button>
+          <button onclick="leaveTeam('${t.id}','${t.name}')" style="background:transparent;color:#ff6b6b;border:1px solid #ff6b6b;border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer">退出</button>
+        </div>
       </div>
     </div>`;
   }).join('');
