@@ -334,9 +334,10 @@ async function loadTeams() {
   const { data: members } = await db.from('team_members').select('team_id, goal_weight, goal_body_fat, streak').eq('user_id', userId);
   const el = document.getElementById('team-content');
   if (!members || members.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
-  const teamIds = members.map(m => m.team_id);
+  const teamIds = members.map(m => m.team_id).filter(id => id !== null && id !== undefined);
+  if (teamIds.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
   const { data: teams } = await db.from('teams').select('*').in('id', teamIds);
-  if (!teams) return;
+  if (!teams || teams.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
   el.innerHTML = teams.map(t => `
     <div class="card" style="margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
