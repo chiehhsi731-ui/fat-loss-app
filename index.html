@@ -117,6 +117,14 @@ pb{padding-bottom:100px;display:block}
   <pb></pb>
   <div id="team-content"><div class="loading">載入隊伍資料...</div></div>
  <button class="btn-purple" onclick="showCreateTeam()">＋ 建立新隊伍</button>
+  <button class="btn-outline" onclick="showJoinTeam()">🔗 輸入邀請碼加入</button>
+<div id="join-team-form" style="display:none;margin-top:12px">
+  <div class="card">
+    <div class="section-label">加入隊伍</div>
+    <input class="input-field" id="invite-code" placeholder="輸入邀請碼（8碼）" maxlength="8">
+    <button class="btn-purple" onclick="joinTeam()">加入隊伍</button>
+  </div>
+</div>
 <button class="btn-outline" onclick="showJoinTeam()">🔗 輸入邀請碼加入</button>
 <div id="join-team-form" style="display:none;margin-top:12px">
   <div class="card">
