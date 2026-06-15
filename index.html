@@ -93,6 +93,10 @@ pb{padding-bottom:100px;display:block}
     </div>
   </div>
   <div class="card">
+    <div class="section-label">本週體重趨勢</div>
+    <div id="weight-chart" style="min-height:80px;display:flex;align-items:center;justify-content:center;color:#6b6485;font-size:12px">記錄2天以上才會顯示圖表</div>
+  </div>
+  <div class="card">
     <div class="section-label">目標進度</div>
     <div class="progress-wrap">
       <div class="progress-label"><span id="goal-w-label">目標體重</span><strong id="goal-w-val">--</strong></div>
@@ -233,6 +237,30 @@ async function loadData() {
   if (latest.weight) document.getElementById('cur-weight').innerHTML = `${latest.weight}<span class="stat-unit">kg</span>`;
   if (latest.body_fat) document.getElementById('cur-fat').innerHTML = `${latest.body_fat}<span class="stat-unit">%</span>`;
   document.getElementById('week-rate').textContent = `${data.length}/7天`;
+  // 畫體重趨勢圖
+  const chartEl = document.getElementById('weight-chart');
+  if (chartEl && data.length > 1) {
+    const weights = data.filter(d => d.weight).reverse();
+    if (weights.length > 1) {
+      const min = Math.min(...weights.map(d => d.weight)) - 0.5;
+      const max = Math.max(...weights.map(d => d.weight)) + 0.5;
+      const w = chartEl.offsetWidth || 300, h = 80;
+      const pts = weights.map((d, i) => {
+        const x = (i / (weights.length - 1)) * (w - 20) + 10;
+        const y = h - ((d.weight - min) / (max - min)) * (h - 20) - 10;
+        return `${x},${y}`;
+      }).join(' ');
+      chartEl.innerHTML = `<svg width="100%" height="${h}" style="overflow:visible">
+        <polyline points="${pts}" fill="none" stroke="#7F77DD" stroke-width="2"/>
+        ${weights.map((d, i) => {
+          const x = (i / (weights.length - 1)) * (w - 20) + 10;
+          const y = h - ((d.weight - min) / (max - min)) * (h - 20) - 10;
+          return `<circle cx="${x}" cy="${y}" r="3" fill="#7F77DD"/>
+                  <text x="${x}" y="${y - 6}" text-anchor="middle" font-size="9" fill="#aaa">${d.weight}</text>`;
+        }).join('')}
+      </svg>`;
+    }
+  }
   const { data: member } = await db.from('team_members').select('streak,goal_weight,goal_body_fat').eq('user_id', userId).limit(1).maybeSingle();
   if (member) {
     document.getElementById('streak-badge').textContent = `🔥 ${member.streak || 0}天`;
@@ -338,16 +366,44 @@ async function loadTeams() {
   if (teamIds.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
   const { data: teams } = await db.from('teams').select('*').in('id', teamIds);
   if (!teams || teams.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
-  el.innerHTML = teams.map(t => `
-    <div class="card" style="margin-bottom:12px">
+  // 查每個隊伍的成員和最新體重
+  const memberDataMap = {};
+  for (const t of teams) {
+    const { data: mems } = await db.from('team_members').select('user_id, streak').eq('team_id', t.id);
+    const userIds = (mems || []).map(m => m.user_id);
+    const { data: uinfos } = await db.from('users').select('id, display_name').in('id', userIds.length > 0 ? userIds : ['none']);
+    const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString();
+    const { data: bodyRecs } = await db.from('body_records').select('user_id, weight, body_fat').in('user_id', userIds.length > 0 ? userIds : ['none']).gte('recorded_at', weekAgo).order('recorded_at', { ascending: false });
+    const latestBody = {};
+    for (const r of (bodyRecs || [])) { if (!latestBody[r.user_id]) latestBody[r.user_id] = r; }
+    const nameMap = {};
+    for (const u of (uinfos || [])) nameMap[u.id] = u.display_name || '隊友';
+    memberDataMap[t.id] = { mems: mems || [], nameMap, latestBody };
+  }
+
+  el.innerHTML = teams.map(t => {
+    const { mems, nameMap, latestBody } = memberDataMap[t.id] || { mems: [], nameMap: {}, latestBody: {} };
+    const sorted = [...mems].sort((a, b) => (b.streak || 0) - (a.streak || 0));
+    const memberRows = sorted.map((m, i) => {
+      const name = nameMap[m.user_id] || '隊友';
+      const body = latestBody[m.user_id];
+      const isMe = m.user_id === userId ? ' (我)' : '';
+      const medals = ['🥇','🥈','🥉'];
+      return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1940;font-size:12px">
+        <span style="color:#ccc">${medals[i]||'  '} ${name}${isMe}</span>
+        <span style="color:#7F77DD">🔥${m.streak||0}天 ${body?.weight ? body.weight+'kg' : ''} ${body?.body_fat ? body.body_fat+'%' : ''}</span>
+      </div>`;
+    }).join('');
+    return `<div class="card" style="margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div style="font-size:15px;font-weight:600;color:#fff">${t.name}</div>
         <div style="font-size:11px;color:#6b6485">截止 ${t.deadline || '--'}</div>
       </div>
-      ${t.bet_content ? `<div style="color:#AFA9EC;font-size:12px;background:#26215C;padding:6px 10px;border-radius:8px">🎰 ${t.bet_content}${t.bet_amount ? ` $${t.bet_amount}` : ''}</div>` : ''}
-      <div style="margin-top:8px;font-size:12px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
-    </div>
-  `).join('');
+      ${t.bet_content ? `<div style="color:#AFA9EC;font-size:12px;background:#26215C;padding:6px 10px;border-radius:8px;margin-bottom:8px">🎰 ${t.bet_content}${t.bet_amount ? ` $${t.bet_amount}` : ''}</div>` : ''}
+      <div style="margin-bottom:8px">${memberRows}</div>
+      <div style="font-size:12px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
+    </div>`;
+  }).join('');
 }
 
 function showCreateTeam() {
@@ -391,11 +447,12 @@ async function createTeam() {
 }
 
 async function loadGoals() {
-  const { data } = await db.from('team_members').select('goal_weight,goal_body_fat,daily_calorie_limit').eq('user_id', userId).limit(1).maybeSingle();
+  const { data } = await db.from('team_members').select('goal_weight,goal_body_fat,daily_calorie_limit,calorie_goal').eq('user_id', userId).limit(1).maybeSingle();
   if (data) {
     if (data.goal_weight) document.getElementById('g-weight').value = data.goal_weight;
     if (data.goal_body_fat) document.getElementById('g-fat').value = data.goal_body_fat;
-    if (data.daily_calorie_limit) document.getElementById('g-cal').value = data.daily_calorie_limit;
+    const cal = data.calorie_goal || data.daily_calorie_limit;
+    if (cal) document.getElementById('g-cal').value = cal;
   }
 }
 
@@ -403,7 +460,7 @@ async function saveGoals() {
   const gw = parseFloat(document.getElementById('g-weight').value);
   const gf = parseFloat(document.getElementById('g-fat').value);
   const gc = parseInt(document.getElementById('g-cal').value);
-  await db.from('team_members').upsert({ user_id: userId, goal_weight: gw||null, goal_body_fat: gf||null, daily_calorie_limit: gc||null });
+  await db.from('team_members').upsert({ user_id: userId, goal_weight: gw||null, goal_body_fat: gf||null, daily_calorie_limit: gc||null, calorie_goal: gc||null });
   alert('✅ 目標已儲存！');
   loadData();
 }
