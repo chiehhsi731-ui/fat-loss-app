@@ -47,9 +47,6 @@ body{background:#0f0d1a;color:#fff;font-family:-apple-system,sans-serif;max-widt
 .member-info{flex:1}
 .member-name{color:#fff;font-size:13px;font-weight:500}
 .member-stats{color:#6b6485;font-size:11px;margin-top:1px}
-.mbadge{font-size:11px;padding:2px 8px;border-radius:10px}
-.mbadge-win{background:#085041;color:#5DCAA5}
-.mbadge-go{background:#26215C;color:#AFA9EC}
 .meal-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2a2040}
 .meal-row:last-child{border-bottom:none}
 .meal-name{color:#ccc;font-size:13px}
@@ -116,23 +113,15 @@ pb{padding-bottom:100px;display:block}
 <div class="screen" id="screen-team">
   <pb></pb>
   <div id="team-content"><div class="loading">載入隊伍資料...</div></div>
- <button class="btn-purple" onclick="showCreateTeam()">＋ 建立新隊伍</button>
+  <button class="btn-purple" onclick="showCreateTeam()">＋ 建立新隊伍</button>
   <button class="btn-outline" onclick="showJoinTeam()">🔗 輸入邀請碼加入</button>
-<div id="join-team-form" style="display:none;margin-top:12px">
-  <div class="card">
-    <div class="section-label">加入隊伍</div>
-    <input class="input-field" id="invite-code" placeholder="輸入邀請碼（8碼）" maxlength="8">
-    <button class="btn-purple" onclick="joinTeam()">加入隊伍</button>
+  <div id="join-team-form" style="display:none;margin-top:12px">
+    <div class="card">
+      <div class="section-label">加入隊伍</div>
+      <input class="input-field" id="invite-code" placeholder="輸入邀請碼（8碼）" maxlength="8">
+      <button class="btn-purple" onclick="joinTeam()">加入隊伍</button>
+    </div>
   </div>
-</div>
-<button class="btn-outline" onclick="showJoinTeam()">🔗 輸入邀請碼加入</button>
-<div id="join-team-form" style="display:none;margin-top:12px">
-  <div class="card">
-    <div class="section-label">加入隊伍</div>
-    <input class="input-field" id="invite-code" placeholder="輸入邀請碼（8碼）" maxlength="8">
-    <button class="btn-purple" onclick="joinTeam()">加入隊伍</button>
-  </div>
-</div>
   <div id="create-team-form" style="display:none;margin-top:12px">
     <div class="card">
       <div class="section-label">建立隊伍</div>
@@ -319,7 +308,9 @@ async function loadTeams() {
 function showCreateTeam() {
   const form = document.getElementById('create-team-form');
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('join-team-form').style.display = 'none';
 }
+
 function showJoinTeam() {
   const form = document.getElementById('join-team-form');
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
@@ -329,18 +320,16 @@ function showJoinTeam() {
 async function joinTeam() {
   const code = document.getElementById('invite-code').value.trim().toLowerCase();
   if (!code || code.length !== 8) { alert('請輸入正確的8碼邀請碼'); return; }
-  
   const { data: team } = await db.from('teams').select('*').eq('invite_code', code).single();
   if (!team) { alert('找不到這個邀請碼，請確認是否正確'); return; }
-  
   const { data: existing } = await db.from('team_members').select('id').eq('team_id', team.id).eq('user_id', userId).maybeSingle();
   if (existing) { alert('你已經在這個隊伍裡了！'); return; }
-  
   await db.from('team_members').insert({ team_id: team.id, user_id: userId });
   alert(`✅ 成功加入「${team.name}」！\n${team.bet_content ? `🎰 賭注：${team.bet_content}` : ''}`);
   document.getElementById('join-team-form').style.display = 'none';
   loadTeams();
 }
+
 async function createTeam() {
   const name = document.getElementById('team-name').value;
   const deadline = document.getElementById('team-deadline').value;
