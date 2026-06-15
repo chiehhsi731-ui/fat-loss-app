@@ -261,16 +261,26 @@ async function loadData() {
       </svg>`;
     }
   }
-  const { data: member } = await db.from('team_members').select('streak,goal_weight,goal_body_fat').eq('user_id', userId).limit(1).maybeSingle();
+  const { data: members } = await db.from('team_members').select('streak,goal_weight,goal_body_fat').eq('user_id', userId).order('joined_at', { ascending: false });
+  // 取有目標設定的那筆
+  const member = members?.find(m => m.goal_weight || m.goal_body_fat) || members?.[0];
   if (member) {
     document.getElementById('streak-badge').textContent = `🔥 ${member.streak || 0}天`;
     if (member.goal_weight && latest.weight) {
       document.getElementById('goal-w-label').textContent = `目標體重 ${member.goal_weight}kg`;
       document.getElementById('goal-w-val').textContent = `${latest.weight}kg`;
+      // 進度條：假設起點比目標重10kg，計算已完成%
+      const startW = Math.max(latest.weight, member.goal_weight + 10);
+      const wPct = Math.max(0, Math.min(100, Math.round((startW - latest.weight) / (startW - member.goal_weight) * 100)));
+      document.getElementById('goal-w-bar').style.width = wPct + '%';
+      document.getElementById('goal-w-val').textContent = `${latest.weight}kg → 目標${member.goal_weight}kg`;
     }
     if (member.goal_body_fat && latest.body_fat) {
       document.getElementById('goal-f-label').textContent = `目標體脂 ${member.goal_body_fat}%`;
-      document.getElementById('goal-f-val').textContent = `${latest.body_fat}%`;
+      document.getElementById('goal-f-val').textContent = `${latest.body_fat}% → 目標${member.goal_body_fat}%`;
+      const startF = Math.max(latest.body_fat, member.goal_body_fat + 10);
+      const fPct = Math.max(0, Math.min(100, Math.round((startF - latest.body_fat) / (startF - member.goal_body_fat) * 100)));
+      document.getElementById('goal-f-bar').style.width = fPct + '%';
     }
   }
   const { data: badges } = await db.from('achievements').select('badge_type').eq('user_id', userId);
