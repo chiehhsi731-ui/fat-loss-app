@@ -11,54 +11,54 @@
 body{background:#0f0d1a;color:#fff;font-family:-apple-system,sans-serif;max-width:390px;margin:0 auto;min-height:100vh}
 .header{background:#0f0d1a;padding:14px 20px 10px;border-bottom:1px solid #2a2040;position:sticky;top:0;z-index:10}
 .header-top{display:flex;justify-content:space-between;align-items:center}
-.app-title{font-size:17px;font-weight:600}
-.streak-badge{background:#7F77DD;color:#fff;font-size:11px;padding:3px 10px;border-radius:20px}
-.header-sub{color:#6b6485;font-size:12px;margin-top:2px}
+.app-title{font-size:19px;font-weight:600}
+.streak-badge{background:#7F77DD;color:#fff;font-size:15px;padding:3px 10px;border-radius:20px}
+.header-sub{color:#6b6485;font-size:16px;margin-top:2px}
 .screen{padding:16px;display:none}
 .screen.active{display:block}
 .tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:#13101f;border-top:1px solid #2a2040;display:flex;padding:8px 0 20px}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;padding:4px 0}
-.tab span{font-size:10px;color:#6b6485}
+.tab span{font-size:12px;color:#6b6485}
 .tab.active span{color:#7F77DD}
 .tab svg{width:22px;height:22px;fill:none;stroke:#6b6485;stroke-width:1.5}
 .tab.active svg{stroke:#7F77DD}
 .card{background:#1a1630;border-radius:16px;border:1px solid #2a2040;padding:14px;margin-bottom:12px}
-.section-label{color:#6b6485;font-size:11px;font-weight:600;letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase}
+.section-label{color:#6b6485;font-size:15px;font-weight:600;letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase}
 .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .stat-box{background:#13101f;border-radius:12px;padding:12px;border:1px solid #2a2040}
-.stat-val{color:#fff;font-size:22px;font-weight:600}
-.stat-unit{color:#6b6485;font-size:11px}
-.stat-label{color:#6b6485;font-size:11px;margin-top:4px}
-.stat-delta{font-size:11px;margin-top:2px;color:#1D9E75}
-.week-pill{display:inline-block;background:#13101f;border:1px solid #2a2040;border-radius:20px;padding:3px 10px;font-size:11px;color:#6b6485;margin-bottom:12px}
+.stat-val{color:#fff;font-size:24px;font-weight:600}
+.stat-unit{color:#6b6485;font-size:15px}
+.stat-label{color:#6b6485;font-size:15px;margin-top:4px}
+.stat-delta{font-size:15px;margin-top:2px;color:#1D9E75}
+.week-pill{display:inline-block;background:#13101f;border:1px solid #2a2040;border-radius:20px;padding:3px 10px;font-size:15px;color:#6b6485;margin-bottom:12px}
 .week-pill strong{color:#7F77DD}
 .progress-wrap{margin-top:6px}
 .progress-label{display:flex;justify-content:space-between;margin-bottom:4px}
-.progress-label span{font-size:12px;color:#888}
-.progress-label strong{font-size:12px;color:#AFA9EC}
+.progress-label span{font-size:16px;color:#888}
+.progress-label strong{font-size:16px;color:#AFA9EC}
 .progress-bar{background:#26215C;border-radius:20px;height:6px}
 .progress-fill{background:#7F77DD;border-radius:20px;height:6px;transition:width .5s}
 .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-.badge{background:#26215C;color:#AFA9EC;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid #3C3489}
+.badge{background:#26215C;color:#AFA9EC;font-size:15px;padding:4px 10px;border-radius:20px;border:1px solid #3C3489}
 .badge.earned{background:#534AB7;color:#fff}
 .member-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #2a2040}
 .member-row:last-child{border-bottom:none}
-.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;background:#3C3489;color:#AFA9EC}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-shrink:0;background:#3C3489;color:#AFA9EC}
 .member-info{flex:1}
-.member-name{color:#fff;font-size:13px;font-weight:500}
-.member-stats{color:#6b6485;font-size:11px;margin-top:1px}
+.member-name{color:#fff;font-size:15px;font-weight:500}
+.member-stats{color:#6b6485;font-size:15px;margin-top:1px}
 .meal-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2a2040}
 .meal-row:last-child{border-bottom:none}
-.meal-name{color:#ccc;font-size:13px}
-.meal-type{color:#6b6485;font-size:11px}
-.meal-cal{color:#7F77DD;font-size:13px;font-weight:600}
+.meal-name{color:#ccc;font-size:15px}
+.meal-type{color:#6b6485;font-size:15px}
+.meal-cal{color:#7F77DD;font-size:15px;font-weight:600}
 .goal-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #2a2040}
 .goal-row:last-child{border-bottom:none}
-.goal-label{color:#888;font-size:13px}
-.goal-val{color:#fff;font-size:13px;font-weight:500}
-.btn-purple{background:#534AB7;color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;width:100%;cursor:pointer;margin-top:8px}
-.btn-outline{background:transparent;color:#7F77DD;border:1px solid #534AB7;border-radius:12px;padding:10px;font-size:13px;width:100%;cursor:pointer;margin-top:8px}
-.input-field{background:#13101f;border:1px solid #2a2040;border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;width:100%;outline:none;margin-bottom:8px}
+.goal-label{color:#888;font-size:15px}
+.goal-val{color:#fff;font-size:15px;font-weight:500}
+.btn-purple{background:#534AB7;color:#fff;border:none;border-radius:12px;padding:12px;font-size:16px;font-weight:600;width:100%;cursor:pointer;margin-top:8px}
+.btn-outline{background:transparent;color:#7F77DD;border:1px solid #534AB7;border-radius:12px;padding:10px;font-size:15px;width:100%;cursor:pointer;margin-top:8px}
+.input-field{background:#13101f;border:1px solid #2a2040;border-radius:10px;padding:10px 12px;color:#fff;font-size:16px;width:100%;outline:none;margin-bottom:8px}
 .input-field:focus{border-color:#534AB7}
 #food-results div:hover{background:#1e1940!important;border-color:#534AB7!important}
 #gram-row .input-field{margin-bottom:0}
@@ -94,7 +94,7 @@ pb{padding-bottom:100px;display:block}
   </div>
   <div class="card">
     <div class="section-label">本週體重趨勢</div>
-    <div id="weight-chart" style="min-height:80px;display:flex;align-items:center;justify-content:center;color:#6b6485;font-size:12px">記錄2天以上才會顯示圖表</div>
+    <div id="weight-chart" style="min-height:80px;display:flex;align-items:center;justify-content:center;color:#6b6485;font-size:16px">記錄2天以上才會顯示圖表</div>
   </div>
   <div class="card">
     <div class="section-label">目標進度</div>
@@ -160,7 +160,7 @@ pb{padding-bottom:100px;display:block}
     <div id="food-results"></div>
     <div id="gram-row" style="display:none;align-items:center;gap:8px;margin-bottom:8px">
       <input class="input-field" id="food-grams" type="number" placeholder="幾克？" style="margin:0;flex:1" oninput="calcCalFromGrams()">
-      <span style="color:#6b6485;font-size:12px;white-space:nowrap">× <span id="cal-per-100g">0</span> kcal/100g</span>
+      <span style="color:#6b6485;font-size:16px;white-space:nowrap">× <span id="cal-per-100g">0</span> kcal/100g</span>
     </div>
     <input class="input-field" id="food-cal" type="number" placeholder="卡路里 (kcal)｜或直接輸入">
     <button class="btn-purple" onclick="addMeal()">新增記錄</button>
@@ -289,7 +289,7 @@ async function loadMeals() {
   const total = data ? data.reduce((s,r) => s + (r.calories||0), 0) : 0;
   document.getElementById('today-cal').textContent = `${total} kcal`;
   const el = document.getElementById('meal-list');
-  if (!data || data.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0">今天還沒有飲食記錄</div>'; return; }
+  if (!data || data.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:15px;padding:8px 0">今天還沒有飲食記錄</div>'; return; }
   el.innerHTML = data.map(r => `<div class="meal-row"><div><div class="meal-name">${r.food_name}</div><div class="meal-type">${r.meal_type}</div></div><div class="meal-cal">${r.calories} kcal</div></div>`).join('');
 }
 
@@ -327,14 +327,14 @@ async function searchFood() {
   const { data } = await db.from('food_database').select('*').ilike('name', `%${q}%`).limit(8);
   const el = document.getElementById('food-results');
   if (!data || data.length === 0) {
-    el.innerHTML = '<div style="color:#6b6485;font-size:12px;padding:6px 0">找不到食物，可直接輸入卡路里</div>';
+    el.innerHTML = '<div style="color:#6b6485;font-size:16px;padding:6px 0">找不到食物，可直接輸入卡路里</div>';
     return;
   }
   el.innerHTML = data.map((f, i) =>
     `<div id="food-opt-${i}" onclick="selectFood(${i},'${f.name.replace(/'/g,"\\'")}',${f.calories_per_100g})"
-      style="padding:10px 12px;background:#13101f;border-radius:10px;margin-bottom:5px;cursor:pointer;font-size:13px;color:#ccc;display:flex;justify-content:space-between;align-items:center;border:1px solid #2a2040">
+      style="padding:10px 12px;background:#13101f;border-radius:10px;margin-bottom:5px;cursor:pointer;font-size:15px;color:#ccc;display:flex;justify-content:space-between;align-items:center;border:1px solid #2a2040">
       <span>${f.name}</span>
-      <span style="color:#7F77DD;font-size:12px;white-space:nowrap">${f.calories_per_100g} kcal/100g</span>
+      <span style="color:#7F77DD;font-size:16px;white-space:nowrap">${f.calories_per_100g} kcal/100g</span>
     </div>`
   ).join('');
 }
@@ -361,11 +361,11 @@ function calcCalFromGrams() {
 async function loadTeams() {
   const { data: members } = await db.from('team_members').select('team_id, goal_weight, goal_body_fat, streak').eq('user_id', userId);
   const el = document.getElementById('team-content');
-  if (!members || members.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
+  if (!members || members.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:15px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
   const teamIds = members.map(m => m.team_id).filter(id => id !== null && id !== undefined);
-  if (teamIds.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
+  if (teamIds.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:15px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
   const { data: teams } = await db.from('teams').select('*').in('id', teamIds);
-  if (!teams || teams.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:13px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
+  if (!teams || teams.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:15px;padding:8px 0;margin-bottom:12px">還沒有加入任何隊伍</div>'; return; }
   // 查每個隊伍的成員和最新體重
   const memberDataMap = {};
   for (const t of teams) {
@@ -389,7 +389,7 @@ async function loadTeams() {
       const body = latestBody[m.user_id];
       const isMe = m.user_id === userId ? ' (我)' : '';
       const medals = ['🥇','🥈','🥉'];
-      return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1940;font-size:12px">
+      return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1940;font-size:16px">
         <span style="color:#ccc">${medals[i]||'  '} ${name}${isMe}</span>
         <span style="color:#7F77DD">🔥${m.streak||0}天 ${body?.weight ? body.weight+'kg' : ''} ${body?.body_fat ? body.body_fat+'%' : ''}</span>
       </div>`;
@@ -397,11 +397,11 @@ async function loadTeams() {
     return `<div class="card" style="margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div style="font-size:15px;font-weight:600;color:#fff">${t.name}</div>
-        <div style="font-size:11px;color:#6b6485">截止 ${t.deadline || '--'}</div>
+        <div style="font-size:15px;color:#6b6485">截止 ${t.deadline || '--'}</div>
       </div>
-      ${t.bet_content ? `<div style="color:#AFA9EC;font-size:12px;background:#26215C;padding:6px 10px;border-radius:8px;margin-bottom:8px">🎰 ${t.bet_content}${t.bet_amount ? ` $${t.bet_amount}` : ''}</div>` : ''}
+      ${t.bet_content ? `<div style="color:#AFA9EC;font-size:16px;background:#26215C;padding:6px 10px;border-radius:8px;margin-bottom:8px">🎰 ${t.bet_content}${t.bet_amount ? ` $${t.bet_amount}` : ''}</div>` : ''}
       <div style="margin-bottom:8px">${memberRows}</div>
-      <div style="font-size:12px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
+      <div style="font-size:16px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
     </div>`;
   }).join('');
 }
@@ -447,7 +447,7 @@ async function createTeam() {
 }
 
 async function loadGoals() {
-  const { data } = await db.from('team_members').select('goal_weight,goal_body_fat,daily_calorie_limit,calorie_goal').eq('user_id', userId).limit(1).maybeSingle();
+  const { data } = await db.from('team_members').select('goal_weight,goal_body_fat,daily_calorie_limit,calorie_goal').eq('user_id', userId).order('joined_at', { ascending: false }).limit(1).maybeSingle();
   if (data) {
     if (data.goal_weight) document.getElementById('g-weight').value = data.goal_weight;
     if (data.goal_body_fat) document.getElementById('g-fat').value = data.goal_body_fat;
@@ -460,7 +460,13 @@ async function saveGoals() {
   const gw = parseFloat(document.getElementById('g-weight').value);
   const gf = parseFloat(document.getElementById('g-fat').value);
   const gc = parseInt(document.getElementById('g-cal').value);
-  await db.from('team_members').upsert({ user_id: userId, goal_weight: gw||null, goal_body_fat: gf||null, daily_calorie_limit: gc||null, calorie_goal: gc||null });
+  // 先查有沒有既有記錄
+  const { data: existing } = await db.from('team_members').select('id').eq('user_id', userId).order('joined_at', { ascending: false }).limit(1).maybeSingle();
+  if (existing) {
+    await db.from('team_members').update({ goal_weight: gw||null, goal_body_fat: gf||null, daily_calorie_limit: gc||null, calorie_goal: gc||null }).eq('id', existing.id);
+  } else {
+    await db.from('team_members').insert({ user_id: userId, goal_weight: gw||null, goal_body_fat: gf||null, daily_calorie_limit: gc||null, calorie_goal: gc||null });
+  }
   alert('✅ 目標已儲存！');
   loadData();
 }
