@@ -293,6 +293,22 @@ async function loadData() {
   }
 }
 
+function copyInvite(teamName, code) {
+  const msg = `🏋️ 邀請你加入「${teamName}」減脂挑戰！\n\n加入方式：\n1️⃣ 加這個 Bot：https://line.me/R/ti/p/@254dtuqa\n2️⃣ 傳送指令：加入 ${code}\n\n或直接開啟 APP：\nhttps://liff.line.me/2010377807-QvlNPosn\n\n一起加油！💪`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(msg).then(() => alert('✅ 邀請訊息已複製！\n直接貼給朋友就可以了'));
+  } else {
+    // fallback
+    const el = document.createElement('textarea');
+    el.value = msg;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    alert('✅ 邀請訊息已複製！\n直接貼給朋友就可以了');
+  }
+}
+
 async function deleteMeal(id) {
   await db.from('meal_records').delete().eq('id', id);
   loadMeals();
@@ -430,7 +446,10 @@ async function loadTeams() {
       </div>
       ${t.bet_content ? `<div style="color:#AFA9EC;font-size:16px;background:#26215C;padding:6px 10px;border-radius:8px;margin-bottom:8px">🎰 ${t.bet_content}${t.bet_amount ? ` $${t.bet_amount}` : ''}</div>` : ''}
       <div style="margin-bottom:8px">${memberRows}</div>
-      <div style="font-size:16px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+        <div style="font-size:14px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
+        <button onclick="copyInvite('${t.name}','${t.invite_code}')" style="background:#534AB7;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer">📨 邀請好友</button>
+      </div>
     </div>`;
   }).join('');
 }
