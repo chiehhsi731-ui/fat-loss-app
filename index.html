@@ -166,7 +166,10 @@ pb{display:block;height:120px}
 
 <!-- 飲食頁 -->
 <div class="screen" id="screen-food">
-  <div class="week-pill">今日熱量 <strong id="today-cal">計算中...</strong></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <div class="week-pill">今日熱量 <strong id="today-cal">計算中...</strong></div>
+    <div class="week-pill">💪 蛋白質 <strong id="today-protein">--g</strong></div>
+  </div>
   <div class="card card-chart">
     <div class="section-label">今日飲食</div>
     <div id="meal-list"><div class="loading">載入中...</div></div>
@@ -363,18 +366,21 @@ function copyInvite(teamName, code) {
 async function deleteMeal(id) {
   await db.from('meal_records').delete().eq('id', id);
   loadMeals();
-  // 更新今日熱量
   const today = new Date().toISOString().split('T')[0];
-  const { data } = await db.from('meal_records').select('calories').eq('user_id', userId).gte('recorded_at', `${today}T00:00:00`);
+  const { data } = await db.from('meal_records').select('calories, protein').eq('user_id', userId).gte('recorded_at', `${today}T00:00:00`);
   const total = data ? data.reduce((s, r) => s + r.calories, 0) : 0;
+  const totalProtein = data ? data.reduce((s, r) => s + (r.protein || 0), 0) : 0;
   document.getElementById('today-cal').textContent = total + ' kcal';
+  document.getElementById('today-protein').textContent = totalProtein.toFixed(1) + 'g';
 }
 
 async function loadMeals() {
   const today = new Date().toISOString().split('T')[0];
   const { data } = await db.from('meal_records').select('*').eq('user_id', userId).gte('recorded_at', `${today}T00:00:00`).order('recorded_at');
   const total = data ? data.reduce((s,r) => s + (r.calories||0), 0) : 0;
+  const totalProtein = data ? data.reduce((s,r) => s + (r.protein||0), 0) : 0;
   document.getElementById('today-cal').textContent = `${total} kcal`;
+  document.getElementById('today-protein').textContent = totalProtein.toFixed(1) + 'g';
   const el = document.getElementById('meal-list');
   if (!data || data.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:15px;padding:8px 0">今天還沒有飲食記錄</div>'; return; }
   el.innerHTML = data.map(r => `<div class="meal-row">
@@ -403,10 +409,12 @@ async function addMeal() {
   document.getElementById('food-results').innerHTML = '';
   selectedCalPer100g = 0;
   loadMeals();
-  // 更新今日熱量顯示
-  const { data } = await db.from('meal_records').select('calories').eq('user_id', userId).gte('recorded_at', `${new Date().toISOString().split('T')[0]}T00:00:00`);
+  // 更新今日熱量＋蛋白質顯示
+  const { data } = await db.from('meal_records').select('calories, protein').eq('user_id', userId).gte('recorded_at', `${new Date().toISOString().split('T')[0]}T00:00:00`);
   const total = data ? data.reduce((s, r) => s + r.calories, 0) : 0;
+  const totalProtein = data ? data.reduce((s, r) => s + (r.protein || 0), 0) : 0;
   document.getElementById('today-cal').textContent = total + ' kcal';
+  document.getElementById('today-protein').textContent = totalProtein.toFixed(1) + 'g';
 }
 
 let selectedCalPer100g = 0;
