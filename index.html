@@ -33,9 +33,6 @@ body{background:#0a0812;color:#fff;font-family:-apple-system,sans-serif;max-widt
 .stat-box::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.12) 0%,transparent 100%);border-radius:24px 24px 0 0;pointer-events:none}
 .stat-box.weight-box{background:linear-gradient(135deg,#2d6be4 0%,#1a3a8f 40%,#0d1f5c 100%);box-shadow:0 8px 32px rgba(45,107,228,0.4),inset 0 1px 0 rgba(255,255,255,0.2)}
 .stat-box.fat-box{background:linear-gradient(135deg,#a855f7 0%,#7c3aed 40%,#4c1d95 100%);box-shadow:0 8px 32px rgba(168,85,247,0.4),inset 0 1px 0 rgba(255,255,255,0.2)}
-.stat-box .glow{position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;filter:blur(50px);opacity:0.4;pointer-events:none}
-.weight-box .glow{background:#64b4ff}
-.fat-box .glow{background:#d8b4fe}
 .stat-val{color:#fff;font-size:32px;font-weight:700;position:relative;z-index:1}
 .stat-unit{color:rgba(255,255,255,0.5);font-size:14px;font-weight:400}
 .stat-label{color:rgba(255,255,255,0.5);font-size:13px;margin-top:4px;position:relative;z-index:1}
@@ -91,13 +88,11 @@ pb{padding-bottom:100px;display:block}
   <div class="week-pill">本週 <strong id="week-rate">計算中...</strong></div>
   <div class="stat-row">
     <div class="stat-box weight-box">
-      <div class="glow"></div>
       <div class="stat-val" id="cur-weight">--<span class="stat-unit">kg</span></div>
       <div class="stat-label">今日體重</div>
       <div class="stat-delta" id="weight-delta"></div>
     </div>
     <div class="stat-box fat-box">
-      <div class="glow"></div>
       <div class="stat-val" id="cur-fat">--<span class="stat-unit">%</span></div>
       <div class="stat-label">體脂率</div>
       <div class="stat-delta" id="fat-delta"></div>
