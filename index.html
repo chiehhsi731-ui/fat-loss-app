@@ -63,14 +63,30 @@ body{background:#0a0812;color:#fff;font-family:-apple-system,sans-serif;max-widt
 .goal-row:last-child{border-bottom:none}
 .goal-label{color:#888;font-size:15px}
 .goal-val{color:#fff;font-size:15px;font-weight:500}
-.btn-purple{background:#534AB7;color:#fff;border:none;border-radius:12px;padding:12px;font-size:16px;font-weight:600;width:100%;cursor:pointer;margin-top:8px}
-.btn-outline{background:transparent;color:#7F77DD;border:1px solid #534AB7;border-radius:12px;padding:10px;font-size:15px;width:100%;cursor:pointer;margin-top:8px}
-.input-field{background:#13101f;border:1px solid #2a2040;border-radius:10px;padding:10px 12px;color:#fff;font-size:16px;width:100%;outline:none;margin-bottom:8px}
-.input-field:focus{border-color:#534AB7}
-#food-results div:hover{background:#1e1940!important;border-color:#534AB7!important}
+.btn-purple{position:relative;overflow:hidden;background:linear-gradient(180deg,#6B63E0 0%,#4A42C0 100%);color:#fff;border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:600;width:100%;cursor:pointer;margin-top:10px;box-shadow:0 4px 20px rgba(80,70,200,0.5),inset 0 1px 0 rgba(255,255,255,0.15);letter-spacing:0.3px}
+.btn-purple::after{content:'';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);width:60%;height:36px;background:radial-gradient(ellipse,rgba(255,255,255,0.3) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+.btn-purple:active{transform:translateY(1px);box-shadow:0 2px 10px rgba(80,70,200,0.4)}
+.btn-outline{position:relative;overflow:hidden;background:rgba(255,255,255,0.05);color:#AFA9EC;border:1px solid rgba(127,119,221,0.3);border-radius:14px;padding:13px;font-size:15px;width:100%;cursor:pointer;margin-top:10px;letter-spacing:0.3px}
+.btn-outline::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:45%;height:20px;background:radial-gradient(ellipse,rgba(175,169,236,0.2) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+.btn-outline:active{background:rgba(255,255,255,0.08)}
+.input-field{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;color:#fff;font-size:15px;width:100%;outline:none;margin-bottom:10px}
+.input-field:focus{border-color:rgba(127,119,221,0.6);background:rgba(255,255,255,0.09)}
+.member-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.member-row:last-child{border-bottom:none}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-shrink:0;background:linear-gradient(135deg,#534AB7,#3C3489);color:#fff}
+.goal-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.goal-row:last-child{border-bottom:none}
+.goal-label{color:rgba(255,255,255,0.5);font-size:15px}
+.meal-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.meal-row:last-child{border-bottom:none}
+.meal-cal{color:#AFA9EC;font-size:14px;font-weight:600}
+#food-results div:hover{background:rgba(100,120,200,0.15)!important;border-color:rgba(127,119,221,0.4)!important}
 #gram-row .input-field{margin-bottom:0}
-.loading{display:flex;align-items:center;justify-content:center;height:200px;color:#6b6485}
-pb{padding-bottom:100px;display:block}
+.loading{display:flex;align-items:center;justify-content:center;height:200px;color:rgba(255,255,255,0.3)}
+.member-name{color:#fff;font-size:15px;font-weight:500}
+.member-stats{color:rgba(255,255,255,0.4);font-size:13px;margin-top:2px}
+.meal-name{color:rgba(255,255,255,0.85);font-size:14px}
+.meal-type{color:rgba(255,255,255,0.35);font-size:13px}
 </style>
 </head>
 <body>
@@ -124,19 +140,18 @@ pb{padding-bottom:100px;display:block}
 
 <!-- 隊伍頁 -->
 <div class="screen" id="screen-team">
-  <pb></pb>
   <div id="team-content"><div class="loading">載入隊伍資料...</div></div>
   <button class="btn-purple" onclick="showCreateTeam()">＋ 建立新隊伍</button>
   <button class="btn-outline" onclick="showJoinTeam()">🔗 輸入邀請碼加入</button>
   <div id="join-team-form" style="display:none;margin-top:12px">
-    <div class="card">
+    <div class="card card-goal">
       <div class="section-label">加入隊伍</div>
       <input class="input-field" id="invite-code" placeholder="輸入邀請碼（8碼）" maxlength="8">
       <button class="btn-purple" onclick="joinTeam()">加入隊伍</button>
     </div>
   </div>
   <div id="create-team-form" style="display:none;margin-top:12px">
-    <div class="card">
+    <div class="card card-goal">
       <div class="section-label">建立隊伍</div>
       <input class="input-field" id="team-name" placeholder="隊伍名稱">
       <input class="input-field" id="team-deadline" type="date" placeholder="截止日">
@@ -145,17 +160,17 @@ pb{padding-bottom:100px;display:block}
       <button class="btn-purple" onclick="createTeam()">建立隊伍</button>
     </div>
   </div>
+  <pb></pb>
 </div>
 
 <!-- 飲食頁 -->
 <div class="screen" id="screen-food">
-  <pb></pb>
   <div class="week-pill">今日熱量 <strong id="today-cal">計算中...</strong></div>
-  <div class="card">
+  <div class="card card-chart">
     <div class="section-label">今日飲食</div>
     <div id="meal-list"><div class="loading">載入中...</div></div>
   </div>
-  <div class="card">
+  <div class="card card-goal">
     <div class="section-label">新增飲食</div>
     <select class="input-field" id="meal-type">
       <option value="早餐">早餐</option>
@@ -167,30 +182,31 @@ pb{padding-bottom:100px;display:block}
     <div id="food-results"></div>
     <div id="gram-row" style="display:none;align-items:center;gap:8px;margin-bottom:8px">
       <input class="input-field" id="food-grams" type="number" placeholder="幾克？" style="margin:0;flex:1" oninput="calcCalFromGrams()">
-      <span style="color:#6b6485;font-size:16px;white-space:nowrap">× <span id="cal-per-100g">0</span> kcal/100g</span>
+      <span style="color:rgba(255,255,255,0.4);font-size:14px;white-space:nowrap">× <span id="cal-per-100g">0</span> kcal/100g</span>
     </div>
     <input class="input-field" id="food-cal" type="number" placeholder="卡路里 (kcal)｜或直接輸入">
     <button class="btn-purple" onclick="addMeal()">新增記錄</button>
   </div>
+  <pb></pb>
 </div>
 
 <!-- 目標頁 -->
 <div class="screen" id="screen-goal">
-  <pb></pb>
-  <div class="card">
+  <div class="card card-goal">
     <div class="section-label">我的目標</div>
     <div class="goal-row"><div class="goal-label">目標體重</div><input class="input-field" id="g-weight" type="number" placeholder="kg" style="width:100px;margin:0"></div>
     <div class="goal-row"><div class="goal-label">目標體脂</div><input class="input-field" id="g-fat" type="number" placeholder="%" style="width:100px;margin:0"></div>
     <div class="goal-row"><div class="goal-label">每日熱量上限</div><input class="input-field" id="g-cal" type="number" placeholder="kcal" style="width:100px;margin:0"></div>
     <button class="btn-purple" onclick="saveGoals()">儲存目標</button>
   </div>
-  <div class="card">
+  <div class="card card-badge">
     <div class="section-label">今日快速記錄</div>
     <input class="input-field" id="q-weight" type="number" placeholder="體重 kg">
     <input class="input-field" id="q-fat" type="number" placeholder="體脂 %">
     <input class="input-field" id="q-water" type="number" placeholder="飲水 ml">
     <button class="btn-purple" onclick="quickRecord()">記錄</button>
   </div>
+  <pb></pb>
 </div>
 
 <!-- Tab Bar -->
