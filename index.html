@@ -140,11 +140,11 @@ pb{display:block;height:120px}
 @keyframes toastOut{from{opacity:1;transform:translateY(0) translateX(-50%)}to{opacity:0;transform:translateY(70px) translateX(-50%)}}
 
 /* 進場 class */
-.anim-card{opacity:0;animation:fadeSlideUp .45s cubic-bezier(.2,0,.2,1) forwards}
-.anim-stat{opacity:0;animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) forwards}
+.anim-card{animation:fadeSlideUp .45s cubic-bezier(.2,0,.2,1) both}
+.anim-stat{animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) both}
 .anim-row{animation:rowSlideIn .28s cubic-bezier(.2,0,.2,1) forwards}
 .anim-out{animation:rowSlideOut .28s cubic-bezier(.4,0,1,1) forwards;overflow:hidden}
-.team-card-anim{opacity:0;animation:teamCardIn .4s cubic-bezier(.2,0,.2,1) forwards}
+.team-card-anim{animation:teamCardIn .4s cubic-bezier(.2,0,.2,1) both}
 .form-expand{animation:formExpand .25s cubic-bezier(.2,0,.2,1) forwards}
 .btn-did-success{animation:btnSuccess .35s cubic-bezier(.175,.885,.32,1.275)}
 
@@ -793,8 +793,8 @@ function switchTab(name){
       if(el){el.style.animation='none';requestAnimationFrame(()=>{el.style.animation='';});}
     });
     // 重置卡片動畫
-    if(name==='food')document.querySelectorAll('#screen-food .anim-card').forEach(c=>{c.style.animation='none';requestAnimationFrame(()=>{c.style.animation='';});});
-    if(name==='goal')document.querySelectorAll('#screen-goal .anim-card').forEach(c=>{c.style.animation='none';requestAnimationFrame(()=>{c.style.animation='';});});
+    if(name==='food')document.querySelectorAll('#screen-food .anim-card').forEach((c,i)=>{c.style.opacity='0';c.style.animation='none';setTimeout(()=>{c.style.opacity='';c.style.animation='';},i*80);});
+    if(name==='goal')document.querySelectorAll('#screen-goal .anim-card').forEach((c,i)=>{c.style.opacity='0';c.style.animation='none';setTimeout(()=>{c.style.opacity='';c.style.animation='';},i*80);});
   };
   if(current){current.classList.add('fading');setTimeout(doSwitch,180);}else{doSwitch();}
   const hero=document.querySelector('.hero-banner');
