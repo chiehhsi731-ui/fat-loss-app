@@ -120,9 +120,84 @@ pb{display:block;height:120px}
   100%{filter:drop-shadow(0 2px 16px rgba(255,100,160,0.7)) drop-shadow(0 0 40px rgba(255,100,160,0.35))}
 }
 .hero-tagline{font-size:13px;color:rgba(255,255,255,0.45);letter-spacing:1.5px;font-weight:400}
+
+/* ══════════════════════════════════════
+   動態系統
+══════════════════════════════════════ */
+
+/* keyframes */
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.82);opacity:0}65%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes rowSlideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
+@keyframes rowSlideOut{from{opacity:1;transform:translateX(0);max-height:64px}to{opacity:0;transform:translateX(24px);max-height:0;padding:0;margin:0}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes badgePop{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.18)}100%{transform:scale(1);opacity:1}}
+@keyframes teamCardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes formExpand{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes btnSuccess{0%{transform:scale(1)}40%{transform:scale(.95)}70%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes tabJump{0%{transform:translateY(0)}40%{transform:translateY(-6px)}70%{transform:translateY(2px)}100%{transform:translateY(0)}}
+@keyframes toastIn{from{opacity:0;transform:translateY(70px) translateX(-50%)}to{opacity:1;transform:translateY(0) translateX(-50%)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0) translateX(-50%)}to{opacity:0;transform:translateY(70px) translateX(-50%)}}
+
+/* 進場 class */
+.anim-card{opacity:0;animation:fadeSlideUp .45s cubic-bezier(.2,0,.2,1) forwards}
+.anim-stat{opacity:0;animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) forwards}
+.anim-row{animation:rowSlideIn .28s cubic-bezier(.2,0,.2,1) forwards}
+.anim-out{animation:rowSlideOut .28s cubic-bezier(.4,0,1,1) forwards;overflow:hidden}
+.team-card-anim{opacity:0;animation:teamCardIn .4s cubic-bezier(.2,0,.2,1) forwards}
+.form-expand{animation:formExpand .25s cubic-bezier(.2,0,.2,1) forwards}
+.btn-did-success{animation:btnSuccess .35s cubic-bezier(.175,.885,.32,1.275)}
+
+/* tab 過場 */
+.screen{opacity:1;transition:opacity .2s ease}
+.screen.fading{opacity:0;pointer-events:none}
+
+/* tab active 跳動 */
+.tab.active svg,.tab.active span{animation:tabJump .3s cubic-bezier(.175,.885,.32,1.275)}
+
+/* 按鈕 hover/press */
+.btn-purple{transition:transform .15s cubic-bezier(.175,.885,.32,1.275),box-shadow .15s ease}
+.btn-purple:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(80,70,200,.6),inset 0 1px 0 rgba(255,255,255,.15)}
+.btn-purple:active{transform:scale(.96) translateY(0)!important;box-shadow:0 2px 10px rgba(80,70,200,.4)}
+.btn-outline{transition:transform .15s cubic-bezier(.175,.885,.32,1.275),background .15s ease,border-color .15s ease}
+.btn-outline:hover{transform:translateY(-2px);background:rgba(255,255,255,.08);border-color:rgba(127,119,221,.5)}
+.btn-outline:active{transform:scale(.96)}
+
+/* card / stat-box hover */
+.card{transition:transform .2s cubic-bezier(.2,0,.2,1),box-shadow .2s ease}
+.card:hover{transform:translateY(-2px)}
+.stat-box{transition:transform .2s cubic-bezier(.175,.885,.32,1.275)}
+.stat-box:hover{transform:scale(1.02)}
+
+/* tab press */
+.tab{transition:transform .15s ease}
+.tab:active{transform:scale(.88)}
+
+/* 進度條 */
+.progress-fill{transition:width 1s cubic-bezier(.2,0,.2,1)!important}
+
+/* gram-row 展開 */
+#gram-row.visible{animation:slideDown .22s cubic-bezier(.2,0,.2,1) forwards}
+
+/* streak badge pop */
+.streak-badge.loaded{animation:badgePop .4s cubic-bezier(.175,.885,.32,1.275) forwards}
+
+/* food 搜尋結果 */
+#food-results > div{transition:background .15s ease,border-color .15s ease;animation:rowSlideIn .2s cubic-bezier(.2,0,.2,1) both}
+
+/* goal-row hover */
+.goal-row{transition:background .15s ease}
+.goal-row:hover{background:rgba(255,255,255,.03);border-radius:8px}
+
+/* Toast */
+#toast-container{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:999;pointer-events:none;width:calc(100% - 40px);max-width:350px}
+.toast-msg{background:rgba(28,20,48,.96);backdrop-filter:blur(16px);border:1px solid rgba(127,119,221,.3);color:#fff;border-radius:16px;padding:14px 18px;font-size:14px;display:flex;align-items:center;gap:10px;margin-top:8px;animation:toastIn .35s cubic-bezier(.2,0,.2,1) forwards}
+.toast-msg.out{animation:toastOut .3s cubic-bezier(.4,0,1,1) forwards}
+.toast-icon{font-size:18px;flex-shrink:0}
 </style>
 </head>
 <body>
+<div id="toast-container"></div>
 <div class="bg-orbs">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
@@ -152,22 +227,22 @@ pb{display:block;height:120px}
 <div class="screen active" id="screen-data">
   <div class="week-pill">本週 <strong id="week-rate">計算中...</strong></div>
   <div class="stat-row">
-    <div class="stat-box weight-box">
+    <div class="stat-box weight-box anim-stat" style="animation-delay:.05s">
       <div class="stat-val" id="cur-weight">--<span class="stat-unit">kg</span></div>
       <div class="stat-label">今日體重</div>
       <div class="stat-delta" id="weight-delta"></div>
     </div>
-    <div class="stat-box fat-box">
+    <div class="stat-box fat-box anim-stat" style="animation-delay:.13s">
       <div class="stat-val" id="cur-fat">--<span class="stat-unit">%</span></div>
       <div class="stat-label">體脂率</div>
       <div class="stat-delta" id="fat-delta"></div>
     </div>
   </div>
-  <div class="card card-chart" style="background:linear-gradient(135deg,rgba(20,40,80,0.8) 0%,rgba(10,15,40,0.9) 100%)">
+  <div class="card card-chart anim-card" style="animation-delay:.2s;background:linear-gradient(135deg,rgba(20,40,80,0.8) 0%,rgba(10,15,40,0.9) 100%)">
     <div class="section-label">本週體重趨勢</div>
     <div id="weight-chart" style="min-height:80px;display:flex;align-items:center;justify-content:center;color:#6b6485;font-size:16px">記錄2天以上才會顯示圖表</div>
   </div>
-  <div class="card card-goal">
+  <div class="card card-goal anim-card" style="animation-delay:.28s">
     <div class="section-label">目標進度</div>
     <div class="progress-wrap">
       <div class="progress-label"><span id="goal-w-label">目標體重</span><strong id="goal-w-val">--</strong></div>
@@ -178,7 +253,7 @@ pb{display:block;height:120px}
       <div class="progress-bar"><div class="progress-fill" id="goal-f-bar" style="width:0%"></div></div>
     </div>
   </div>
-  <div class="card card-badge">
+  <div class="card card-badge anim-card" style="animation-delay:.36s">
     <div class="section-label">成就徽章</div>
     <div class="badge-row" id="badge-row">
       <span class="badge">🏅 載入中</span>
@@ -244,14 +319,14 @@ pb{display:block;height:120px}
 
 <!-- 目標頁 -->
 <div class="screen" id="screen-goal">
-  <div class="card card-goal">
+  <div class="card card-goal anim-card" style="animation-delay:.05s">
     <div class="section-label">我的目標</div>
     <div class="goal-row"><div class="goal-label">目標體重</div><input class="input-field" id="g-weight" type="number" placeholder="kg" style="width:100px;margin:0"></div>
     <div class="goal-row"><div class="goal-label">目標體脂</div><input class="input-field" id="g-fat" type="number" placeholder="%" style="width:100px;margin:0"></div>
     <div class="goal-row"><div class="goal-label">每日熱量上限</div><input class="input-field" id="g-cal" type="number" placeholder="kcal" style="width:100px;margin:0"></div>
     <button class="btn-purple" onclick="saveGoals()">儲存目標</button>
   </div>
-  <div class="card card-badge">
+  <div class="card card-badge anim-card" style="animation-delay:.15s">
     <div class="section-label">今日快速記錄</div>
     <input class="input-field" id="q-weight" type="number" placeholder="體重 kg">
     <input class="input-field" id="q-fat" type="number" placeholder="體脂 %">
@@ -282,6 +357,33 @@ pb{display:block;height:120px}
 </div>
 
 <script>
+
+/* ── Toast（取代 alert）── */
+function showToast(msg, type='success'){
+  const icons={success:'✅',error:'❌',info:'💡',warn:'⚠️'};
+  const c=document.getElementById('toast-container');
+  const el=document.createElement('div');
+  el.className='toast-msg';
+  el.innerHTML=`<span class="toast-icon">${icons[type]||'✅'}</span><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),320);},3200);
+}
+
+/* ── 數字滾動 ── */
+function animateValue(el,from,to,dur=800,suffix=''){
+  if(!el)return;
+  const isFloat=!Number.isInteger(to);
+  const start=performance.now();
+  const tick=(now)=>{
+    const t=Math.min((now-start)/dur,1);
+    const e=1-Math.pow(1-t,3);
+    const v=from+(to-from)*e;
+    el.textContent=(isFloat?v.toFixed(1):Math.round(v))+suffix;
+    if(t<1)requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
 const SUPABASE_URL = 'https://sbkhkhghfeyaawkocvrj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNia2hraGdoZmV5YWF3a29jdnJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjgyMzksImV4cCI6MjA5Njc0NDIzOX0.7UpFVsNysDa2uwvyFhE2TTDtxTzDrDwAIHXAYEHiYOo';
 const LIFF_ID = '2010377807-QvlNPosn';
@@ -309,8 +411,16 @@ async function loadData() {
   const { data } = await db.from('body_records').select('*').eq('user_id', userId).gte('recorded_at', weekAgo).order('recorded_at', {ascending:false});
   if (!data || data.length === 0) { document.getElementById('streak-badge').textContent = '🔥 0天'; return; }
   const latest = data[0];
-  if (latest.weight) document.getElementById('cur-weight').innerHTML = `${latest.weight}<span class="stat-unit">kg</span>`;
-  if (latest.body_fat) document.getElementById('cur-fat').innerHTML = `${latest.body_fat}<span class="stat-unit">%</span>`;
+  if (latest.weight) {
+    const wEl=document.getElementById('cur-weight');
+    wEl.innerHTML=`<span id="w-num">0</span><span class="stat-unit">kg</span>`;
+    setTimeout(()=>animateValue(document.getElementById('w-num'),0,latest.weight,700),300);
+  }
+  if (latest.body_fat) {
+    const fEl=document.getElementById('cur-fat');
+    fEl.innerHTML=`<span id="f-num">0</span><span class="stat-unit">%</span>`;
+    setTimeout(()=>animateValue(document.getElementById('f-num'),0,latest.body_fat,700),420);
+  }
   document.getElementById('week-rate').textContent = `${data.length}/7天`;
   // 畫體重趨勢圖
   const chartEl = document.getElementById('weight-chart');
@@ -360,14 +470,18 @@ async function loadData() {
   // 取有目標設定的那筆
   const member = members?.find(m => m.goal_weight || m.goal_body_fat) || members?.[0];
   if (member) {
-    document.getElementById('streak-badge').textContent = `🔥 ${member.streak || 0}天`;
+    const badge=document.getElementById('streak-badge');
+    badge.textContent=`🔥 ${member.streak || 0}天`;
+    badge.classList.remove('loaded');
+    requestAnimationFrame(()=>badge.classList.add('loaded'));
     if (member.goal_weight && latest.weight) {
       document.getElementById('goal-w-label').textContent = `目標體重 ${member.goal_weight}kg`;
       document.getElementById('goal-w-val').textContent = `${latest.weight}kg`;
       // 進度條：假設起點比目標重10kg，計算已完成%
       const startW = Math.max(latest.weight, member.goal_weight + 10);
       const wPct = Math.max(0, Math.min(100, Math.round((startW - latest.weight) / (startW - member.goal_weight) * 100)));
-      document.getElementById('goal-w-bar').style.width = wPct + '%';
+      document.getElementById('goal-w-bar').style.width='0%';
+      setTimeout(()=>{document.getElementById('goal-w-bar').style.width=wPct+'%';},420);
       document.getElementById('goal-w-val').textContent = `${latest.weight}kg → 目標${member.goal_weight}kg`;
     }
     if (member.goal_body_fat && latest.body_fat) {
@@ -375,7 +489,8 @@ async function loadData() {
       document.getElementById('goal-f-val').textContent = `${latest.body_fat}% → 目標${member.goal_body_fat}%`;
       const startF = Math.max(latest.body_fat, member.goal_body_fat + 10);
       const fPct = Math.max(0, Math.min(100, Math.round((startF - latest.body_fat) / (startF - member.goal_body_fat) * 100)));
-      document.getElementById('goal-f-bar').style.width = fPct + '%';
+      document.getElementById('goal-f-bar').style.width='0%';
+      setTimeout(()=>{document.getElementById('goal-f-bar').style.width=fPct+'%';},540);
     }
   }
   const { data: badges } = await db.from('achievements').select('badge_type').eq('user_id', userId);
@@ -391,14 +506,14 @@ async function loadData() {
 async function leaveTeam(teamId, teamName) {
   if (!confirm(`確定要退出「${teamName}」嗎？`)) return;
   await db.from('team_members').delete().eq('user_id', userId).eq('team_id', teamId);
-  alert(`已退出「${teamName}」`);
+  showToast(`已退出「${teamName}」`);
   loadTeams();
 }
 
 function copyInvite(teamName, code) {
   const msg = `🏋️ 邀請你加入「${teamName}」減脂挑戰！\n\n加入方式：\n1️⃣ 加這個 Bot：https://line.me/R/ti/p/@254dtuqa\n2️⃣ 傳送指令：加入 ${code}\n\n或直接開啟 APP：\nhttps://liff.line.me/2010377807-QvlNPosn\n\n一起加油！💪`;
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(msg).then(() => alert('✅ 邀請訊息已複製！\n直接貼給朋友就可以了'));
+    navigator.clipboard.writeText(msg).then(() => showToast('邀請訊息已複製！直接貼給朋友'));
   } else {
     // fallback
     const el = document.createElement('textarea');
@@ -407,11 +522,13 @@ function copyInvite(teamName, code) {
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
-    alert('✅ 邀請訊息已複製！\n直接貼給朋友就可以了');
+    showToast('邀請訊息已複製！直接貼給朋友');
   }
 }
 
-async function deleteMeal(id) {
+async function deleteMeal(id,btn){
+  const row=btn?btn.closest('.meal-row'):null;
+  if(row){row.classList.add('anim-out');await new Promise(r=>setTimeout(r,260));}
   await db.from('meal_records').delete().eq('id', id);
   loadMeals();
   const today = new Date().toISOString().split('T')[0];
@@ -427,18 +544,18 @@ async function loadMeals() {
   const { data } = await db.from('meal_records').select('*').eq('user_id', userId).gte('recorded_at', `${today}T00:00:00`).order('recorded_at');
   const total = data ? data.reduce((s,r) => s + (r.calories||0), 0) : 0;
   const totalProtein = data ? data.reduce((s,r) => s + (r.protein||0), 0) : 0;
-  document.getElementById('today-cal').textContent = `${total} kcal`;
-  document.getElementById('today-protein').textContent = totalProtein.toFixed(1) + 'g';
+  animateValue(document.getElementById('today-cal'),0,total,600,' kcal');
+  animateValue(document.getElementById('today-protein'),0,totalProtein,600,'g');
   const el = document.getElementById('meal-list');
   if (!data || data.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:15px;padding:8px 0">今天還沒有飲食記錄</div>'; return; }
-  el.innerHTML = data.map(r => `<div class="meal-row">
+  el.innerHTML = data.map((r,idx) => `<div class="meal-row anim-row" style="animation-delay:${idx*50}ms">
     <div style="flex:1;min-width:0">
       <div class="meal-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.food_name}</div>
       <div class="meal-type">${r.meal_type}</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
       <div class="meal-cal">${r.calories} kcal</div>
-      <button onclick="deleteMeal('${r.id}')" style="background:none;border:none;color:#6b6485;font-size:18px;cursor:pointer;padding:0 4px;line-height:1">×</button>
+      <button onclick="deleteMeal('${r.id}',this)" style="background:none;border:none;color:#6b6485;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;transition:color .15s" onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color='#6b6485'">×</button>
     </div>
   </div>`).join('');
 }
@@ -447,8 +564,10 @@ async function addMeal() {
   const mealType = document.getElementById('meal-type').value;
   const foodName = document.getElementById('food-search').value.trim();
   const calories = parseInt(document.getElementById('food-cal').value);
-  if (!foodName) { alert('請輸入食物名稱'); return; }
-  if (!calories || calories <= 0) { alert('請輸入卡路里\n\n💡 搜尋食物後輸入克數，系統會自動計算'); return; }
+  if (!foodName) { showToast('請輸入食物名稱','error'); return; }
+  if (!calories || calories <= 0) { showToast('請輸入卡路里（搜尋食物後輸入克數可自動計算）','error'); return; }
+  const addBtn=document.querySelector('#screen-food .btn-purple');
+  if(addBtn){addBtn.textContent='記錄中...';addBtn.disabled=true;}
   await db.from('meal_records').insert({ user_id: userId, meal_type: mealType, food_name: foodName, calories });
   document.getElementById('food-search').value = '';
   document.getElementById('food-cal').value = '';
@@ -456,13 +575,12 @@ async function addMeal() {
   document.getElementById('gram-row').style.display = 'none';
   document.getElementById('food-results').innerHTML = '';
   selectedCalPer100g = 0;
+  if(addBtn){
+    addBtn.textContent='✓ 已記錄';addBtn.classList.add('btn-did-success');
+    setTimeout(()=>{addBtn.textContent='新增記錄';addBtn.disabled=false;addBtn.classList.remove('btn-did-success');},1200);
+  }
+  showToast(`${mealType} ${foodName} ${calories} kcal 已記錄！`);
   loadMeals();
-  // 更新今日熱量＋蛋白質顯示
-  const { data } = await db.from('meal_records').select('calories, protein').eq('user_id', userId).gte('recorded_at', `${new Date().toISOString().split('T')[0]}T00:00:00`);
-  const total = data ? data.reduce((s, r) => s + r.calories, 0) : 0;
-  const totalProtein = data ? data.reduce((s, r) => s + (r.protein || 0), 0) : 0;
-  document.getElementById('today-cal').textContent = total + ' kcal';
-  document.getElementById('today-protein').textContent = totalProtein.toFixed(1) + 'g';
 }
 
 let selectedCalPer100g = 0;
@@ -484,7 +602,7 @@ async function searchFood() {
   }
   el.innerHTML = data.map((f, i) =>
     `<div id="food-opt-${i}" onclick="selectFood(${i},'${f.name.replace(/'/g,"\\'")}',${f.calories_per_100g})"
-      style="padding:10px 12px;background:#13101f;border-radius:10px;margin-bottom:5px;cursor:pointer;font-size:15px;color:#ccc;display:flex;justify-content:space-between;align-items:center;border:1px solid #2a2040">
+      style="padding:10px 12px;background:#13101f;border-radius:10px;margin-bottom:5px;cursor:pointer;font-size:15px;color:#ccc;display:flex;justify-content:space-between;align-items:center;border:1px solid #2a2040;animation-delay:${i*40}ms">
       <span>${f.name}</span>
       <span style="color:#7F77DD;font-size:16px;white-space:nowrap">${f.calories_per_100g} kcal/100g</span>
     </div>`
@@ -499,7 +617,9 @@ function selectFood(idx, name, calPer100g) {
   document.getElementById('food-grams').value = '';
   document.getElementById('food-cal').value = '';
   const gramRow = document.getElementById('gram-row');
-  gramRow.style.display = 'flex';
+  gramRow.style.display='flex';
+  gramRow.classList.remove('visible');
+  requestAnimationFrame(()=>gramRow.classList.add('visible'));
   document.getElementById('food-grams').focus();
 }
 
@@ -533,7 +653,7 @@ async function loadTeams() {
     memberDataMap[t.id] = { mems: mems || [], nameMap, latestBody };
   }
 
-  el.innerHTML = teams.map(t => {
+  el.innerHTML = teams.map((t,tIdx) => {
     const { mems, nameMap, latestBody } = memberDataMap[t.id] || { mems: [], nameMap: {}, latestBody: {} };
     const sorted = [...mems].sort((a, b) => (b.streak || 0) - (a.streak || 0));
     const memberRows = sorted.map((m, i) => {
@@ -541,12 +661,12 @@ async function loadTeams() {
       const body = latestBody[m.user_id];
       const isMe = m.user_id === userId ? ' (我)' : '';
       const medals = ['🥇','🥈','🥉'];
-      return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1940;font-size:16px">
+      return `<div class="anim-row" style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1940;font-size:16px;animation-delay:${(tIdx*3+i)*40+120}ms">
         <span style="color:#ccc">${medals[i]||'  '} ${name}${isMe}</span>
         <span style="color:#7F77DD">🔥${m.streak||0}天 ${body?.weight ? body.weight+'kg' : ''} ${body?.body_fat ? body.body_fat+'%' : ''}</span>
       </div>`;
     }).join('');
-    return `<div class="card" style="margin-bottom:12px">
+    return `<div class="card team-card-anim" style="margin-bottom:12px;animation-delay:${tIdx*80}ms">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div style="font-size:15px;font-weight:600;color:#fff">${t.name}</div>
         <div style="font-size:15px;color:#6b6485">截止 ${t.deadline || '--'}</div>
@@ -556,35 +676,44 @@ async function loadTeams() {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
         <div style="font-size:14px;color:#6b6485">邀請碼：<span style="color:#7F77DD;font-weight:600">${t.invite_code}</span></div>
         <div style="display:flex;gap:8px">
-          <button onclick="copyInvite('${t.name}','${t.invite_code}')" style="background:#534AB7;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer">📨 邀請</button>
-          <button onclick="leaveTeam('${t.id}','${t.name}')" style="background:transparent;color:#ff6b6b;border:1px solid #ff6b6b;border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer">退出</button>
+          <button onclick="copyInvite('${t.name}','${t.invite_code}')" style="background:#534AB7;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer;transition:transform .15s,opacity .15s" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''">📨 邀請</button>
+          <button onclick="leaveTeam('${t.id}','${t.name}')" style="background:transparent;color:#ff6b6b;border:1px solid #ff6b6b;border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer;transition:transform .15s,background .15s" onmouseover="this.style.background='rgba(255,107,107,.1)'" onmouseout="this.style.background='transparent'" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''">退出</button>
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-function showCreateTeam() {
-  const form = document.getElementById('create-team-form');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
-  document.getElementById('join-team-form').style.display = 'none';
+function showCreateTeam(){
+  const form=document.getElementById('create-team-form');
+  document.getElementById('join-team-form').style.display='none';
+  if(!form.style.display||form.style.display==='none'){
+    form.style.display='block';
+    const card=form.querySelector('.card');
+    card.classList.remove('form-expand');
+    requestAnimationFrame(()=>card.classList.add('form-expand'));
+  }else{form.style.display='none';}
 }
-
-function showJoinTeam() {
-  const form = document.getElementById('join-team-form');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
-  document.getElementById('create-team-form').style.display = 'none';
+function showJoinTeam(){
+  const form=document.getElementById('join-team-form');
+  document.getElementById('create-team-form').style.display='none';
+  if(!form.style.display||form.style.display==='none'){
+    form.style.display='block';
+    const card=form.querySelector('.card');
+    card.classList.remove('form-expand');
+    requestAnimationFrame(()=>card.classList.add('form-expand'));
+  }else{form.style.display='none';}
 }
 
 async function joinTeam() {
   const code = document.getElementById('invite-code').value.trim().toLowerCase();
-  if (!code || code.length !== 8) { alert('請輸入正確的8碼邀請碼'); return; }
+  if (!code || code.length !== 8) { showToast('請輸入正確的8碼邀請碼','error'); return; }
   const { data: team } = await db.from('teams').select('*').eq('invite_code', code).single();
-  if (!team) { alert('找不到這個邀請碼，請確認是否正確'); return; }
+  if (!team) { showToast('找不到這個邀請碼，請確認是否正確','error'); return; }
   const { data: existing } = await db.from('team_members').select('id').eq('team_id', team.id).eq('user_id', userId).maybeSingle();
-  if (existing) { alert('你已經在這個隊伍裡了！'); return; }
+  if (existing) { showToast('你已經在這個隊伍裡了！','warn'); return; }
   await db.from('team_members').insert({ team_id: team.id, user_id: userId });
-  alert(`✅ 成功加入「${team.name}」！\n${team.bet_content ? `🎰 賭注：${team.bet_content}` : ''}`);
+  showToast(`成功加入「${team.name}」！`);
   document.getElementById('join-team-form').style.display = 'none';
   loadTeams();
 }
@@ -594,11 +723,11 @@ async function createTeam() {
   const deadline = document.getElementById('team-deadline').value;
   const betContent = document.getElementById('bet-content').value;
   const betAmount = parseInt(document.getElementById('bet-amount').value) || null;
-  if (!name) { alert('請填寫隊伍名稱'); return; }
+  if (!name) { showToast('請填寫隊伍名稱','error'); return; }
   const { data: team } = await db.from('teams').insert({ name, leader_id: userId, deadline: deadline || null, bet_content: betContent || null, bet_amount: betAmount }).select().single();
   if (team) {
     await db.from('team_members').insert({ team_id: team.id, user_id: userId });
-    alert(`✅ 隊伍建立成功！\n邀請碼：${team.invite_code}\n把邀請碼分享給隊友，讓他們輸入加入！`);
+    showToast(`隊伍建立成功！邀請碼：${team.invite_code}`);
     document.getElementById('create-team-form').style.display = 'none';
     loadTeams();
   }
@@ -614,8 +743,8 @@ async function loadGoals() {
   }
 }
 
-async function saveGoals() {
-  const gw = parseFloat(document.getElementById('g-weight').value);
+async function saveGoals(){
+  const gw=parseFloat(document.getElementById('g-weight').value);
   const gf = parseFloat(document.getElementById('g-fat').value);
   const gc = parseInt(document.getElementById('g-cal').value);
   // 先查有沒有既有記錄
@@ -625,7 +754,7 @@ async function saveGoals() {
   } else {
     await db.from('team_members').insert({ user_id: userId, goal_weight: gw||null, goal_body_fat: gf||null, daily_calorie_limit: gc||null, calorie_goal: gc||null });
   }
-  alert('✅ 目標已儲存！');
+  showToast('目標已儲存！');
   loadData();
 }
 
@@ -633,7 +762,7 @@ async function quickRecord() {
   const w = parseFloat(document.getElementById('q-weight').value);
   const f = parseFloat(document.getElementById('q-fat').value);
   const wa = parseInt(document.getElementById('q-water').value);
-  if (!w && !f && !wa) { alert('請至少填一項'); return; }
+  if (!w && !f && !wa) { showToast('請至少填一項','error'); return; }
   await db.from('body_records').insert({ user_id: userId, weight: w||null, body_fat: f||null, water_ml: wa||null });
   if (w) {
     const { data: existing } = await db.from('achievements').select('id').eq('user_id', userId).eq('badge_type', 'first_record').limit(1);
@@ -642,20 +771,37 @@ async function quickRecord() {
   document.getElementById('q-weight').value = '';
   document.getElementById('q-fat').value = '';
   document.getElementById('q-water').value = '';
-  alert('✅ 記錄成功！');
+  const rBtn=document.querySelector('#screen-goal .card-badge .btn-purple');
+  if(rBtn){rBtn.textContent='✓ 記錄成功';rBtn.classList.add('btn-did-success');setTimeout(()=>{rBtn.textContent='記錄';rBtn.classList.remove('btn-did-success');},1200);}
+  showToast('記錄成功！');
   loadData();
 }
 
-function switchTab(name) {
-  ['data','team','food','goal'].forEach(t => {
-    document.getElementById(`screen-${t}`).classList.toggle('active', t===name);
-    document.getElementById(`tab-${t}`).classList.toggle('active', t===name);
-  });
-  const hero = document.querySelector('.hero-banner');
-  if (hero) hero.style.display = name === 'data' ? 'block' : 'none';
-  if (name === 'food') loadMeals();
-  if (name === 'team') loadTeams();
-  if (name === 'goal') loadGoals();
+function switchTab(name){
+  const current=document.querySelector('.screen.active');
+  const doSwitch=()=>{
+    ['data','team','food','goal'].forEach(t=>{
+      document.getElementById(`screen-${t}`).classList.toggle('active',t===name);
+      document.getElementById(`tab-${t}`).classList.toggle('active',t===name);
+    });
+    if(current)current.classList.remove('fading');
+    const next=document.getElementById(`screen-${name}`);
+    if(next){next.style.opacity='0';requestAnimationFrame(()=>{next.style.opacity='';});}
+    // tab icon 跳動
+    const aTab=document.getElementById(`tab-${name}`);
+    [aTab?.querySelector('svg'),aTab?.querySelector('span')].forEach(el=>{
+      if(el){el.style.animation='none';requestAnimationFrame(()=>{el.style.animation='';});}
+    });
+    // 重置卡片動畫
+    if(name==='food')document.querySelectorAll('#screen-food .anim-card').forEach(c=>{c.style.animation='none';requestAnimationFrame(()=>{c.style.animation='';});});
+    if(name==='goal')document.querySelectorAll('#screen-goal .anim-card').forEach(c=>{c.style.animation='none';requestAnimationFrame(()=>{c.style.animation='';});});
+  };
+  if(current){current.classList.add('fading');setTimeout(doSwitch,180);}else{doSwitch();}
+  const hero=document.querySelector('.hero-banner');
+  if(hero)hero.style.display=name==='data'?'block':'none';
+  if(name==='food')setTimeout(loadMeals,200);
+  if(name==='team')setTimeout(loadTeams,200);
+  if(name==='goal')setTimeout(loadGoals,200);
 }
 
 init().catch(console.error);
