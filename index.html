@@ -548,7 +548,7 @@ async function loadMeals() {
   animateValue(document.getElementById('today-protein'),0,totalProtein,600,'g');
   const el = document.getElementById('meal-list');
   if (!data || data.length === 0) { el.innerHTML = '<div style="color:#6b6485;font-size:15px;padding:8px 0">今天還沒有飲食記錄</div>'; return; }
-  el.innerHTML = data.map((r,idx) => `<div class="meal-row anim-row" style="animation-delay:${idx*50}ms">
+  el.innerHTML = data.map((r,idx) => `<div class="meal-row">
     <div style="flex:1;min-width:0">
       <div class="meal-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.food_name}</div>
       <div class="meal-type">${r.meal_type}</div>
