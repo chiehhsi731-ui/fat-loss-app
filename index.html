@@ -661,7 +661,7 @@ async function loadTeams() {
       const body = latestBody[m.user_id];
       const isMe = m.user_id === userId ? ' (我)' : '';
       const medals = ['🥇','🥈','🥉'];
-      return `<div class="anim-row" style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1940;font-size:16px;animation-delay:${(tIdx*3+i)*40+120}ms">
+      return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e1940;font-size:16px">
         <span style="color:#ccc">${medals[i]||'  '} ${name}${isMe}</span>
         <span style="color:#7F77DD">🔥${m.streak||0}天 ${body?.weight ? body.weight+'kg' : ''} ${body?.body_fat ? body.body_fat+'%' : ''}</span>
       </div>`;
