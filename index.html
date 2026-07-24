@@ -259,6 +259,12 @@ pb{display:block;height:120px}
       <span class="badge">🏅 載入中</span>
     </div>
   </div>
+  <div class="card card-chart anim-card" style="animation-delay:.44s">
+    <div class="section-label">睡眠與運動</div>
+    <div class="goal-row"><div class="goal-label">本週平均睡眠</div><div class="goal-val" id="week-sleep">--</div></div>
+    <div class="goal-row"><div class="goal-label">本週運動次數</div><div class="goal-val" id="week-exercise-count">--</div></div>
+    <div class="goal-row"><div class="goal-label">本週消耗熱量</div><div class="goal-val" id="week-exercise-burn">--</div></div>
+  </div>
   <pb></pb>
 </div>
 
@@ -331,6 +337,7 @@ pb{display:block;height:120px}
     <input class="input-field" id="q-weight" type="number" placeholder="體重 kg">
     <input class="input-field" id="q-fat" type="number" placeholder="體脂 %">
     <input class="input-field" id="q-water" type="number" placeholder="飲水 ml">
+    <input class="input-field" id="q-sleep" type="number" step="0.5" placeholder="睡眠 小時">
     <button class="btn-purple" onclick="quickRecord()">記錄</button>
   </div>
   <pb></pb>
@@ -404,6 +411,7 @@ async function init() {
   loadMeals();
   loadTeams();
   loadGoals();
+  loadSleepExercise();
 }
 
 async function loadData() {
@@ -501,6 +509,25 @@ async function loadData() {
   } else {
     badgeEl.innerHTML = '<span class="badge">完成記錄解鎖徽章！</span>';
   }
+}
+
+async function loadSleepExercise() {
+  const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString();
+  const { data: sleepData } = await db.from('sleep_records').select('hours').eq('user_id', userId).gte('recorded_at', weekAgo);
+  const { data: exerciseData } = await db.from('exercise_records').select('calories_burned').eq('user_id', userId).gte('recorded_at', weekAgo);
+  const sleepEl = document.getElementById('week-sleep');
+  const countEl = document.getElementById('week-exercise-count');
+  const burnEl = document.getElementById('week-exercise-burn');
+  if (sleepEl) {
+    if (sleepData && sleepData.length > 0) {
+      const avg = sleepData.reduce((s,r)=>s+r.hours,0) / sleepData.length;
+      sleepEl.textContent = avg.toFixed(1) + ' 小時';
+    } else {
+      sleepEl.textContent = '尚無記錄';
+    }
+  }
+  if (countEl) countEl.textContent = (exerciseData?.length || 0) + ' 次';
+  if (burnEl) burnEl.textContent = (exerciseData ? exerciseData.reduce((s,r)=>s+(r.calories_burned||0),0) : 0) + ' kcal';
 }
 
 async function leaveTeam(teamId, teamName) {
@@ -762,8 +789,14 @@ async function quickRecord() {
   const w = parseFloat(document.getElementById('q-weight').value);
   const f = parseFloat(document.getElementById('q-fat').value);
   const wa = parseInt(document.getElementById('q-water').value);
-  if (!w && !f && !wa) { showToast('請至少填一項','error'); return; }
-  await db.from('body_records').insert({ user_id: userId, weight: w||null, body_fat: f||null, water_ml: wa||null });
+  const sl = parseFloat(document.getElementById('q-sleep').value);
+  if (!w && !f && !wa && !sl) { showToast('請至少填一項','error'); return; }
+  if (w || f || wa) {
+    await db.from('body_records').insert({ user_id: userId, weight: w||null, body_fat: f||null, water_ml: wa||null });
+  }
+  if (sl) {
+    await db.from('sleep_records').insert({ user_id: userId, hours: sl });
+  }
   if (w) {
     const { data: existing } = await db.from('achievements').select('id').eq('user_id', userId).eq('badge_type', 'first_record').limit(1);
     if (!existing || existing.length === 0) await db.from('achievements').insert({ user_id: userId, badge_type: 'first_record' });
@@ -771,10 +804,12 @@ async function quickRecord() {
   document.getElementById('q-weight').value = '';
   document.getElementById('q-fat').value = '';
   document.getElementById('q-water').value = '';
+  document.getElementById('q-sleep').value = '';
   const rBtn=document.querySelector('#screen-goal .card-badge .btn-purple');
   if(rBtn){rBtn.textContent='✓ 記錄成功';rBtn.classList.add('btn-did-success');setTimeout(()=>{rBtn.textContent='記錄';rBtn.classList.remove('btn-did-success');},1200);}
   showToast('記錄成功！');
   loadData();
+  loadSleepExercise();
 }
 
 function switchTab(name){
